@@ -1,0 +1,172 @@
+create an android application which is a SMS manager
+It should have a main screen with a list of SMS messages.
+It need not be group by sender
+It should have a search field.
+on type of search term and submit, it should search and display matched results on same list
+Develop the app in java 
+
+Give it as a single prompt to give to an agent to achieve this
+--------------------------------------------------------------------------------------------
+output
+
+
+
+Here’s a **single, well-scoped prompt** you can give to an AI coding agent to build your SMS manager app in Java:
+
+---
+
+## **PROMPT FOR AGENT**
+
+Build a complete Android application in **Java (not Kotlin)** named **"SMS Manager"** with the following requirements.
+
+---
+
+## **App Overview**
+
+* The app displays SMS messages from the device inbox
+* Messages are shown in a simple list (no grouping by sender required)
+* Includes a search feature to filter messages by keyword
+
+---
+
+## **Core Features**
+
+### 1. Read SMS Messages
+
+* Read SMS from device using:
+
+  * `ContentResolver`
+  * URI: `content://sms/inbox`
+* Fetch and display:
+
+  * Sender address
+  * Message body
+  * Timestamp
+* Convert timestamp to readable format (e.g., `yyyy-MM-dd HH:mm:ss`)
+
+---
+
+### 2. SMS List Display
+
+* Main screen shows all SMS messages in a **RecyclerView**
+* Each item should display:
+
+  * Sender
+  * Message preview (first 1–2 lines)
+  * Timestamp
+* No grouping required
+
+---
+
+### 3. Search Functionality
+
+* Add a **search input field** at top of screen
+* Behavior:
+
+  * User types search term and submits
+  * Filter messages where:
+
+    * Message body contains term OR
+    * Sender contains term
+* Display filtered results in same RecyclerView
+* Provide option to clear search and show full list again
+
+---
+
+### 4. Permissions
+
+Handle runtime permissions:
+
+* `READ_SMS`
+
+Behavior:
+
+* If permission not granted:
+
+  * Show explanation
+  * Request permission
+* Handle denial gracefully
+
+---
+
+## **User Interface**
+
+### Main Screen Layout
+
+* Top:
+
+  * Search field (EditText)
+  * Search button (or IME action)
+* Below:
+
+  * RecyclerView for SMS list
+
+Optional:
+
+* Empty state text ("No messages found")
+
+---
+
+## **Architecture & Code Structure**
+
+* Use **Java + AndroidX**
+* Suggested structure:
+
+  * `MainActivity`
+  * `SmsAdapter` (RecyclerView adapter)
+  * `SmsModel` (data class)
+  * `SmsRepository` or helper class for fetching SMS
+* Follow clean and modular design
+
+---
+
+## **Performance Considerations**
+
+* Load SMS asynchronously (background thread)
+* Avoid blocking UI thread
+* Use efficient filtering (in-memory list filtering)
+
+---
+
+## **Edge Cases**
+
+Handle:
+
+* No SMS available
+* Permission denied
+* Empty search results
+* Large SMS dataset
+
+---
+
+## **Project Setup**
+
+* Use **latest stable Gradle version**
+* Include:
+
+  * `gradlew`
+  * `gradlew.bat`
+  * `gradle-wrapper.properties`
+  * `gradle.properties`
+
+Ensure project builds with:
+
+```
+./gradlew build
+```
+
+---
+
+## **Output Requirements**
+
+Provide a **complete Android project**, including:
+
+* Java source files
+* XML layouts
+* AndroidManifest.xml
+* Gradle configuration files
+* Fully runnable code (no pseudo code)
+
+---
+
+## **End of Prompt**
