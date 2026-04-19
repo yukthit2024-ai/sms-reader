@@ -12,7 +12,9 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SmsManager">
+        android:theme="@style/Theme.SmsManager"
+        android:testOnly="false"
+        android:extractNativeLibs="${extractNativeLibs}">
         <activity
             android:name="com.vypeensoft.smsmanager.MainActivity"
             android:exported="true">

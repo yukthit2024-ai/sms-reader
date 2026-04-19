@@ -5,13 +5,16 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.vypeensoft.smsmanager"
+        applicationId "com.vypeensoft.smsmanager.v2"
         minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Fix for specific ROMs that fail to parse APKs without explicit extraction
+        manifestPlaceholders = [extractNativeLibs: "true"]
     }
 
     signingConfigs {
