@@ -68,7 +68,17 @@ public class MainActivity extends AppCompatActivity {
         rgViewGroup = findViewById(R.id.rgViewGroup);
 
         rvSmsList.setLayoutManager(new LinearLayoutManager(this));
-        smsAdapter = new SmsAdapter(new ArrayList<>());
+        smsAdapter = new SmsAdapter(new ArrayList<>(), sms -> {
+            if (isGroupView) {
+                Intent intent = new Intent(MainActivity.this, GroupedMessagesActivity.class);
+                intent.putExtra("group_name", extractSenderName(sms.getSender()));
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(MainActivity.this, MessageDetailActivity.class);
+                intent.putExtra("sms_data", sms);
+                startActivity(intent);
+            }
+        });
         rvSmsList.setAdapter(smsAdapter);
 
         btnSearch.setOnClickListener(v -> performSearch());
@@ -156,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         updateVisibility();
     }
 
-    private String extractSenderName(String originalSender) {
+    public static String extractSenderName(String originalSender) {
         if (originalSender == null) return "";
         String sender = originalSender;
 

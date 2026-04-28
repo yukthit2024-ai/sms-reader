@@ -1,6 +1,8 @@
 package com.vypeensoft.smsmanager;
 
-public class SmsModel {
+import java.io.Serializable;
+
+public class SmsModel implements Serializable {
     private String sender;
     private String body;
     private String timestamp;

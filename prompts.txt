@@ -8,11 +8,19 @@ Develop the app in java
 Give it as a single prompt to give to an agent to achieve this
 --------------------------------------------------------------------------------------------
 more prompts
-abouve the search text field, have a radio button "Group By Sender" and "Individual messages".
-On clicking individual mesages, show messages in the list as single SMS messages.
-On clicking the "Group by sender",the folowing is expected....
-If the third character in sender name is a "-", then ignore the first three character.  Then if the second last character is "-", then ignore the last two characters.  This gives me the "Sender name".   Now, group all messages with the same "sender name" into a single list and show only the latest of that list in the main screen list
+*	above the search text field, have a radio button "Group By Sender" and "Individual messages".
+*	On clicking individual mesages, show messages in the list as single SMS messages.
+	On clicking the "Group by sender",the folowing is expected....
 
+*	If the third character in sender name is a "-", then ignore the first three character.  
+		Then if the second last character is "-", then ignore the last two characters.  
+		This gives me the "Sender name".   
+		Now, group all messages with the same "sender name" into a single list 
+		and show only the latest of that list in the main screen list
+
+*	on the main screen.  when i click on the list item.... the folowing behaviour is expected....
+		When in individual mode, show the full SMS message in a new screen.
+		When in "Grouped" mode, clicking on one list item should take me to a list which shows all messages in that group in descending order of timestamp
 
 
 

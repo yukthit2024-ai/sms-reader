@@ -11,10 +11,16 @@ import java.util.List;
 
 public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
-    private List<SmsModel> smsList;
+    public interface OnItemClickListener {
+        void onItemClick(SmsModel sms);
+    }
 
-    public SmsAdapter(List<SmsModel> smsList) {
+    private List<SmsModel> smsList;
+    private OnItemClickListener listener;
+
+    public SmsAdapter(List<SmsModel> smsList, OnItemClickListener listener) {
         this.smsList = smsList;
+        this.listener = listener;
     }
 
     public void updateList(List<SmsModel> newList) {
@@ -35,6 +41,12 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         holder.tvSender.setText(sms.getSender());
         holder.tvTimestamp.setText(sms.getTimestamp());
         holder.tvBody.setText(sms.getBody());
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(sms);
+            }
+        });
     }
 
     @Override
