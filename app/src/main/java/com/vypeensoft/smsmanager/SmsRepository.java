@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.time.Instant;
 
 public class SmsRepository {
 
@@ -28,13 +29,11 @@ public class SmsRepository {
                     int indexDate = cursor.getColumnIndex("date");
                     int indexRead = cursor.getColumnIndex("read");
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-
                     while (cursor.moveToNext()) {
                         String address = cursor.getString(indexAddress);
                         String body = cursor.getString(indexBody);
                         long dateMillis = cursor.getLong(indexDate);
-                        String timestamp = formatter.format(new Date(dateMillis));
+                        String timestamp = Instant.ofEpochMilli(dateMillis).toString();
                         boolean isRead = true; // default
                         if (indexRead != -1) {
                             isRead = cursor.getInt(indexRead) == 1;

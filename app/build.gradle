@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def gitSha     = 'git rev-parse --short HEAD'.execute().text.trim()
+def gitShaFull = 'git rev-parse         HEAD'.execute().text.trim()
+def gitTag     = 'git describe        --tags'.execute().text.trim()
+
 android {
     namespace 'com.vypeensoft.smsmanager'
     compileSdk 34
@@ -15,6 +19,15 @@ android {
         
         // Fix for specific ROMs that fail to parse APKs without explicit extraction
         manifestPlaceholders = [extractNativeLibs: "true"]
+
+        buildConfigField "String", "BUILD_TIMESTAMP", "\"${new Date().format('yyyyMMdd.HHmmss')}\""
+        buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+        buildConfigField "String", "GIT_SHA_FULL", "\"${gitShaFull}\""
+        buildConfigField "String", "GIT_TAG", "\"${gitTag}\""
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     signingConfigs {

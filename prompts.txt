@@ -29,6 +29,18 @@ more prompts
 		It should contain only search-criteria-matched messages from that sender.
 		This behaviour should be maintained when a search criteria is present and user toggles between individual and group settings
 
+*	Need a left side menu with items like "Settings", "Help", "About".
+	for Settings and Help, place a screen with some dummy data
+	The left side menu is covering from top to bottom.  Even when menu is visible, it should not cover the app top bar ....
+	store the timestamp as ISO format instead of milliseconds since epoc
+	have back arrow/buttons on each of the above pages
+
+*	In the "About" screen, add build and git version details on the page.
+	get git details from "X:\Projects_X\0_Active\8_Android_APK\Fake_GPS_Location_APK_GITHUB\app\build.gradle" and the below lines
+       buildConfigField "String", "BUILD_TIMESTAMP", "\"${new Date().format('yyyyMMdd.HHmmss')}\""
+       buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+       buildConfigField "String", "GIT_SHA_FULL", "\"${gitShaFull}\""
+       buildConfigField "String", "GIT_TAG", "\"${gitTag}\""		
 
 
 
