@@ -35,11 +35,20 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     }
     
     private void loadGroupedMessages() {
+        String searchQuery = getIntent().getStringExtra("search_query");
+        if (searchQuery == null) searchQuery = "";
+        
+        final String finalSearchQuery = searchQuery;
+
         SmsRepository.getAllSms(getContentResolver(), smsList -> {
             List<SmsModel> filtered = new ArrayList<>();
             for (SmsModel sms : smsList) {
                 if (MainActivity.extractSenderName(sms.getSender()).equals(groupName)) {
-                    filtered.add(sms);
+                    if (finalSearchQuery.isEmpty() || 
+                        sms.getSender().toLowerCase().contains(finalSearchQuery) || 
+                        sms.getBody().toLowerCase().contains(finalSearchQuery)) {
+                        filtered.add(sms);
+                    }
                 }
             }
             runOnUiThread(() -> {

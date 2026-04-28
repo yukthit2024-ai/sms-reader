@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
             if (isGroupView) {
                 Intent intent = new Intent(MainActivity.this, GroupedMessagesActivity.class);
                 intent.putExtra("group_name", extractSenderName(sms.getSender()));
+                intent.putExtra("search_query", etSearch.getText().toString().toLowerCase().trim());
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(MainActivity.this, MessageDetailActivity.class);

@@ -24,6 +24,10 @@ more prompts
 
 *	on the main screen also, if in group mode, show the trimmed sender name.
 
+*	in group mode , when a search is made... the main screen list shows matched messages grouped by Sender. this is fine.
+		But when I click on the sender, it goes to second list... but this list contains all messages from that sender.  
+		It should contain only search-criteria-matched messages from that sender.
+		This behaviour should be maintained when a search criteria is present and user toggles between individual and group settings
 
 
 
