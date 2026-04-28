@@ -42,7 +42,7 @@ more prompts
        buildConfigField "String", "GIT_SHA_FULL", "\"${gitShaFull}\""
        buildConfigField "String", "GIT_TAG", "\"${gitTag}\""		
 
-
+*	make the search text field and search button same height
 
 
 output
