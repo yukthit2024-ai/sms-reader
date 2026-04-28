@@ -6,13 +6,38 @@
     android:layout_height="match_parent"
     android:background="#F5F7FA">
 
+    <RadioGroup
+        android:id="@+id/rgViewGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="12dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/rbIndividual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Individual messages" />
+
+        <RadioButton
+            android:id="@+id/rbGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Group By Sender" />
+    </RadioGroup>
+
     <LinearLayout
         android:id="@+id/searchContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/rgViewGroup">
 
         <EditText
             android:id="@+id/etSearch"

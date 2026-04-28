@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -19,7 +20,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvEmptyState;
     private View emptyStateContainer;
     private Button btnRequestPermission;
+    private RadioGroup rgViewGroup;
+    private boolean isGroupView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         tvEmptyState = findViewById(R.id.tvEmptyState);
         emptyStateContainer = findViewById(R.id.emptyStateContainer);
         btnRequestPermission = findViewById(R.id.btnRequestPermission);
+        rgViewGroup = findViewById(R.id.rgViewGroup);
 
         rvSmsList.setLayoutManager(new LinearLayoutManager(this));
         smsAdapter = new SmsAdapter(new ArrayList<>());
@@ -79,6 +85,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {}
+        });
+
+        rgViewGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            isGroupView = (checkedId == R.id.rbGroup);
+            performSearch();
         });
 
         btnRequestPermission.setOnClickListener(v -> {
@@ -120,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         List<SmsModel> filteredList = new ArrayList<>();
 
         if (query.isEmpty()) {
-            filteredList = allSmsList;
+            filteredList.addAll(allSmsList);
         } else {
             for (SmsModel sms : allSmsList) {
                 if (sms.getSender().toLowerCase().contains(query) || sms.getBody().toLowerCase().contains(query)) {
@@ -129,8 +140,37 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        if (isGroupView) {
+            Map<String, SmsModel> latestMessages = new LinkedHashMap<>();
+            for (SmsModel sms : filteredList) {
+                String senderName = extractSenderName(sms.getSender());
+                if (!latestMessages.containsKey(senderName)) {
+                    // Since allSmsList is already sorted by date DESC, the first one encountered is the latest
+                    latestMessages.put(senderName, sms);
+                }
+            }
+            filteredList = new ArrayList<>(latestMessages.values());
+        }
+
         smsAdapter.updateList(filteredList);
         updateVisibility();
+    }
+
+    private String extractSenderName(String originalSender) {
+        if (originalSender == null) return "";
+        String sender = originalSender;
+
+        // If the third character in sender name is a "-", then ignore the first three characters
+        if (sender.length() >= 3 && sender.charAt(2) == '-') {
+            sender = sender.substring(3);
+        }
+
+        // Then if the second last character is "-", then ignore the last two characters
+        if (sender.length() >= 2 && sender.charAt(sender.length() - 2) == '-') {
+            sender = sender.substring(0, sender.length() - 2);
+        }
+
+        return sender;
     }
 
     private void updateVisibility() {
