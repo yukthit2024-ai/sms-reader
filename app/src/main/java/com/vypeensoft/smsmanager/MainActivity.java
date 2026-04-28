@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
             filteredList = new ArrayList<>(latestMessages.values());
         }
 
+        smsAdapter.setShowTrimmedSender(isGroupView);
         smsAdapter.updateList(filteredList);
         updateVisibility();
     }

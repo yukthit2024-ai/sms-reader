@@ -17,10 +17,16 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
     private List<SmsModel> smsList;
     private OnItemClickListener listener;
+    private boolean showTrimmedSender = false;
 
     public SmsAdapter(List<SmsModel> smsList, OnItemClickListener listener) {
         this.smsList = smsList;
         this.listener = listener;
+    }
+
+    public void setShowTrimmedSender(boolean showTrimmedSender) {
+        this.showTrimmedSender = showTrimmedSender;
+        // Don't call notifyDataSetChanged() here, because updateList is usually called right after
     }
 
     public void updateList(List<SmsModel> newList) {
@@ -38,7 +44,11 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull SmsViewHolder holder, int position) {
         SmsModel sms = smsList.get(position);
-        holder.tvSender.setText(sms.getSender());
+        if (showTrimmedSender) {
+            holder.tvSender.setText(MainActivity.extractSenderName(sms.getSender()));
+        } else {
+            holder.tvSender.setText(sms.getSender());
+        }
         holder.tvTimestamp.setText(sms.getTimestamp());
         holder.tvBody.setText(sms.getBody());
         

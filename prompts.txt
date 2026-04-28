@@ -22,6 +22,7 @@ more prompts
 		When in individual mode, show the full SMS message in a new screen.
 		When in "Grouped" mode, clicking on one list item should take me to a list which shows all messages in that group in descending order of timestamp
 
+*	on the main screen also, if in group mode, show the trimmed sender name.
 
 
 
