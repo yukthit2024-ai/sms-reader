@@ -18,25 +18,29 @@ public class SmsRepository {
     public static void getAllSms(ContentResolver contentResolver, SmsLoadCallback callback) {
         new Thread(() -> {
             List<SmsModel> smsList = new ArrayList<>();
-            Uri uriSms = Uri.parse("content://sms/inbox");
-            Cursor cursor = contentResolver.query(uriSms, new String[]{"address", "body", "date"}, null, null, "date DESC");
+            try {
+                Uri uriSms = Uri.parse("content://sms/inbox");
+                Cursor cursor = contentResolver.query(uriSms, new String[]{"address", "body", "date"}, null, null, "date DESC");
 
-            if (cursor != null) {
-                int indexAddress = cursor.getColumnIndex("address");
-                int indexBody = cursor.getColumnIndex("body");
-                int indexDate = cursor.getColumnIndex("date");
+                if (cursor != null) {
+                    int indexAddress = cursor.getColumnIndex("address");
+                    int indexBody = cursor.getColumnIndex("body");
+                    int indexDate = cursor.getColumnIndex("date");
 
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
-                while (cursor.moveToNext()) {
-                    String address = cursor.getString(indexAddress);
-                    String body = cursor.getString(indexBody);
-                    long dateMillis = cursor.getLong(indexDate);
-                    String timestamp = formatter.format(new Date(dateMillis));
+                    while (cursor.moveToNext()) {
+                        String address = cursor.getString(indexAddress);
+                        String body = cursor.getString(indexBody);
+                        long dateMillis = cursor.getLong(indexDate);
+                        String timestamp = formatter.format(new Date(dateMillis));
 
-                    smsList.add(new SmsModel(address, body, timestamp));
+                        smsList.add(new SmsModel(address, body, timestamp));
+                    }
+                    cursor.close();
                 }
-                cursor.close();
+            } catch (SecurityException e) {
+                e.printStackTrace();
             }
 
             callback.onSmsLoaded(smsList);

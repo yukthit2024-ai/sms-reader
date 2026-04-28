@@ -1,7 +1,9 @@
 package com.vypeensoft.smsmanager;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText etSearch;
     private Button btnSearch;
     private TextView tvEmptyState;
+    private View emptyStateContainer;
+    private Button btnRequestPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +43,23 @@ public class MainActivity extends AppCompatActivity {
         checkPermissions();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+            loadSms();
+        } else {
+            updateVisibility();
+        }
+    }
+
     private void initViews() {
         rvSmsList = findViewById(R.id.rvSmsList);
         etSearch = findViewById(R.id.etSearch);
         btnSearch = findViewById(R.id.btnSearch);
         tvEmptyState = findViewById(R.id.tvEmptyState);
+        emptyStateContainer = findViewById(R.id.emptyStateContainer);
+        btnRequestPermission = findViewById(R.id.btnRequestPermission);
 
         rvSmsList.setLayoutManager(new LinearLayoutManager(this));
         smsAdapter = new SmsAdapter(new ArrayList<>());
@@ -64,10 +80,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        btnRequestPermission.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS) &&
+                        getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("permission_requested", false)) {
+                    // Open Settings
+                    Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else {
+                    checkPermissions();
+                }
+            }
+        });
     }
 
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            getSharedPreferences("prefs", MODE_PRIVATE).edit().putBoolean("permission_requested", true).apply();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, PERMISSION_REQUEST_READ_SMS);
         } else {
             loadSms();
@@ -78,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
         SmsRepository.getAllSms(getContentResolver(), smsList -> {
             runOnUiThread(() -> {
                 allSmsList = smsList;
-                smsAdapter.updateList(allSmsList);
-                updateVisibility();
+                performSearch(); // Re-apply search filter if any, which also calls updateVisibility
             });
         });
     }
@@ -103,11 +134,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateVisibility() {
-        if (smsAdapter.getItemCount() == 0) {
-            tvEmptyState.setVisibility(View.VISIBLE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            emptyStateContainer.setVisibility(View.VISIBLE);
+            tvEmptyState.setText("SMS permission is required to view messages.");
+            btnRequestPermission.setVisibility(View.VISIBLE);
+            rvSmsList.setVisibility(View.GONE);
+            
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS) &&
+                    getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("permission_requested", false)) {
+                btnRequestPermission.setText("Open Settings");
+            } else {
+                btnRequestPermission.setText("Grant Permission");
+            }
+        } else if (smsAdapter.getItemCount() == 0) {
+            emptyStateContainer.setVisibility(View.VISIBLE);
+            tvEmptyState.setText("No messages found");
+            btnRequestPermission.setVisibility(View.GONE);
             rvSmsList.setVisibility(View.GONE);
         } else {
-            tvEmptyState.setVisibility(View.GONE);
+            emptyStateContainer.setVisibility(View.GONE);
             rvSmsList.setVisibility(View.VISIBLE);
         }
     }
@@ -119,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 loadSms();
             } else {
-                Toast.makeText(this, "Permission denied. Cannot load SMS.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Permission denied. Cannot load SMS.", Toast.LENGTH_SHORT).show();
+                updateVisibility();
             }
         }
     }

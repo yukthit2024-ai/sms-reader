@@ -1,0 +1,3 @@
+group messages by sender - If 3rd character is a '-', then remove first three characters from the sender name and then group them.
+When in group mode, show sender name and latest message from that group in the main screen list 
+When user clicks on it, open the group in new window, containing all messages from that group
