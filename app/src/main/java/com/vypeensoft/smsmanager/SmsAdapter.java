@@ -57,11 +57,13 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             holder.tvBody.setTypeface(null, android.graphics.Typeface.BOLD);
             holder.tvSender.setTextColor(android.graphics.Color.parseColor("#000000"));
             holder.tvBody.setTextColor(android.graphics.Color.parseColor("#111111"));
+            holder.itemView.setBackgroundColor(android.graphics.Color.parseColor("#E8F0FE")); // Light blue for unread
         } else {
             holder.tvSender.setTypeface(null, android.graphics.Typeface.NORMAL);
             holder.tvBody.setTypeface(null, android.graphics.Typeface.NORMAL);
             holder.tvSender.setTextColor(android.graphics.Color.parseColor("#333333"));
             holder.tvBody.setTextColor(android.graphics.Color.parseColor("#555555"));
+            holder.itemView.setBackgroundColor(android.graphics.Color.TRANSPARENT); // Default background for read
         }
 
         holder.itemView.setOnClickListener(v -> {
