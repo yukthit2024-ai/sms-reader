@@ -1,5 +1,7 @@
 package com.vypeensoft.smsmanager;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,15 +23,17 @@ public class SmsRepository {
             List<SmsModel> smsList = new ArrayList<>();
             try {
                 Uri uriSms = Uri.parse("content://sms/inbox");
-                Cursor cursor = contentResolver.query(uriSms, new String[]{"address", "body", "date", "read"}, null, null, "date DESC");
+                Cursor cursor = contentResolver.query(uriSms, new String[]{"_id", "address", "body", "date", "read"}, null, null, "date DESC");
 
                 if (cursor != null) {
+                    int indexId = cursor.getColumnIndex("_id");
                     int indexAddress = cursor.getColumnIndex("address");
                     int indexBody = cursor.getColumnIndex("body");
                     int indexDate = cursor.getColumnIndex("date");
                     int indexRead = cursor.getColumnIndex("read");
 
                     while (cursor.moveToNext()) {
+                        String id = cursor.getString(indexId);
                         String address = cursor.getString(indexAddress);
                         String body = cursor.getString(indexBody);
                         long dateMillis = cursor.getLong(indexDate);
@@ -39,7 +43,7 @@ public class SmsRepository {
                             isRead = cursor.getInt(indexRead) == 1;
                         }
 
-                        smsList.add(new SmsModel(address, body, timestamp, isRead));
+                        smsList.add(new SmsModel(id, address, body, timestamp, isRead));
                     }
                     cursor.close();
                 }
@@ -48,6 +52,19 @@ public class SmsRepository {
             }
 
             callback.onSmsLoaded(smsList);
+        }).start();
+    }
+
+    public static void markSmsAsRead(Context context, String messageId) {
+        new Thread(() -> {
+            try {
+                ContentValues values = new ContentValues();
+                values.put("read", 1);
+                Uri uriSms = Uri.parse("content://sms/inbox");
+                context.getContentResolver().update(uriSms, values, "_id=" + messageId, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 }

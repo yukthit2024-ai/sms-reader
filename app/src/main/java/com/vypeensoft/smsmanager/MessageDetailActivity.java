@@ -19,6 +19,11 @@ public class MessageDetailActivity extends AppCompatActivity {
             tvSender.setText(sms.getSender());
             tvTimestamp.setText(sms.getTimestamp());
             tvBody.setText(sms.getBody());
+            
+            if (!sms.isRead()) {
+                SmsRepository.markSmsAsRead(this, sms.getId());
+                sms.setRead(true);
+            }
         }
     }
 }
