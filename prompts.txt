@@ -45,6 +45,7 @@ more prompts
 *	make the search text field and search button same height
 *	Once a messaged is opened and viewed, make the message as "read" status and do not highlight it anymore
 *	after clicking to open an SMS message, update the SMS store to "read" status. it should not be highlighted anymore
+*	Provide a option in the settings page to increase and decrease font sizes
 
 output
 

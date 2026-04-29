@@ -52,6 +52,12 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         holder.tvTimestamp.setText(sms.getTimestamp());
         holder.tvBody.setText(sms.getBody());
         
+        android.content.SharedPreferences prefs = holder.itemView.getContext().getSharedPreferences("settings_prefs", android.content.Context.MODE_PRIVATE);
+        int fontSize = prefs.getInt("font_size", 16);
+        holder.tvSender.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, fontSize);
+        holder.tvBody.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, fontSize);
+        holder.tvTimestamp.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, Math.max(10, fontSize - 4));
+        
         if (!sms.isRead()) {
             holder.tvSender.setTypeface(null, android.graphics.Typeface.BOLD);
             holder.tvBody.setTypeface(null, android.graphics.Typeface.BOLD);
