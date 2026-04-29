@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) == PackageManager.PERMISSION_GRANTED) {
             loadSms();
         } else {
             updateVisibility();
@@ -140,8 +141,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnRequestPermission.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS) &&
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) != PackageManager.PERMISSION_GRANTED) {
+                if ((!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS) ||
+                     !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_SMS)) &&
                         getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("permission_requested", false)) {
                     // Open Settings
                     Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -156,9 +159,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) != PackageManager.PERMISSION_GRANTED) {
             getSharedPreferences("prefs", MODE_PRIVATE).edit().putBoolean("permission_requested", true).apply();
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, PERMISSION_REQUEST_READ_SMS);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.WRITE_SMS}, PERMISSION_REQUEST_READ_SMS);
         } else {
             loadSms();
         }
@@ -222,13 +226,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateVisibility() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) != PackageManager.PERMISSION_GRANTED) {
             emptyStateContainer.setVisibility(View.VISIBLE);
             tvEmptyState.setText("SMS permission is required to view messages.");
             btnRequestPermission.setVisibility(View.VISIBLE);
             rvSmsList.setVisibility(View.GONE);
             
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS) &&
+            if ((!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS) ||
+                 !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_SMS)) &&
                     getSharedPreferences("prefs", MODE_PRIVATE).getBoolean("permission_requested", false)) {
                 btnRequestPermission.setText("Open Settings");
             } else {
@@ -249,7 +255,14 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_READ_SMS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            if (grantResults.length > 0 && allGranted) {
                 loadSms();
             } else {
                 Toast.makeText(this, "Permission denied. Cannot load SMS.", Toast.LENGTH_SHORT).show();

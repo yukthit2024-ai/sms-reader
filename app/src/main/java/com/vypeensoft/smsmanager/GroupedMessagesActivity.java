@@ -56,4 +56,9 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             });
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadGroupedMessages();
+    }
 }

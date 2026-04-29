@@ -60,7 +60,7 @@ public class SmsRepository {
             try {
                 ContentValues values = new ContentValues();
                 values.put("read", 1);
-                Uri uriSms = Uri.parse("content://sms/inbox");
+                Uri uriSms = Uri.parse("content://sms");
                 context.getContentResolver().update(uriSms, values, "_id=" + messageId, null);
             } catch (Exception e) {
                 e.printStackTrace();
