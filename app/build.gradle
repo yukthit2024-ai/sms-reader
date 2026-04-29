@@ -20,7 +20,8 @@ android {
         // Fix for specific ROMs that fail to parse APKs without explicit extraction
         manifestPlaceholders = [extractNativeLibs: "true"]
 
-        buildConfigField "String", "BUILD_TIMESTAMP", "\"${new Date().format('yyyyMMdd.HHmmss')}\""
+        //buildConfigField "String", "BUILD_TIMESTAMP", "\"${new Date().format('yyyyMMdd.HHmmss')}\""
+        buildConfigField "String", "BUILD_TIMESTAMP", "\"${new Date().format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('Asia/Kolkata'))}\""
         buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         buildConfigField "String", "GIT_SHA_FULL", "\"${gitShaFull}\""
         buildConfigField "String", "GIT_TAG", "\"${gitTag}\""
@@ -41,6 +42,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
         debug {
             signingConfig signingConfigs.debug

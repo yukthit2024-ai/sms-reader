@@ -37,8 +37,8 @@ jobs:
         
 
       # ── Build ───────────────────────────────────────────────────────────────
-      - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build release APK
+        run: ./gradlew assembleRelease --stacktrace
 
       # ── Verify APK exists (helps debug path issues) ─────────────────────────
       - name: Show APK path
@@ -52,17 +52,17 @@ jobs:
       - name: Rename APK
         if: success()
         run: |
-          mv app/build/outputs/apk/debug/app-debug.apk \
-             app/build/outputs/apk/debug/SMS-Reader-${BUILD_TIMESTAMP}.apk
+          mv app/build/outputs/apk/release/app-release.apk \
+             app/build/outputs/apk/release/SMS-Reader-${BUILD_TIMESTAMP}.apk
           echo "Renamed APK → SMS-Reader-${BUILD_TIMESTAMP}.apk"
 
       # ── Upload APK artifact ─────────────────────────────────────────────────
-      - name: Upload debug APK
+      - name: Upload release APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: SMS-Reader-${{ env.BUILD_TIMESTAMP }}
-          path: app/build/outputs/apk/debug/SMS-Reader-${{ env.BUILD_TIMESTAMP }}.apk
+          path: app/build/outputs/apk/release/SMS-Reader-${{ env.BUILD_TIMESTAMP }}.apk
           if-no-files-found: error    # fail loudly if APK is missing
 
       # ── Write job summary ───────────────────────────────────────────────────
@@ -73,7 +73,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| APK | \`app/build/outputs/apk/debug/app-debug.apk\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| APK | \`app/build/outputs/apk/release/app-release.apk\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Artifact | **SMS-Reader-$BUILD_TIMESTAMP** (download from the Summary tab above) |" >> $GITHUB_STEP_SUMMARY
 
       # ── Upload build reports on failure (for easier debugging) ──────────────
