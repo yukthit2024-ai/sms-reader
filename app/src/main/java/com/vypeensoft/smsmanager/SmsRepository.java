@@ -37,7 +37,8 @@ public class SmsRepository {
                         String address = cursor.getString(indexAddress);
                         String body = cursor.getString(indexBody);
                         long dateMillis = cursor.getLong(indexDate);
-                        String timestamp = Instant.ofEpochMilli(dateMillis).toString();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss", Locale.getDefault());
+                        String timestamp = sdf.format(new Date(dateMillis));
                         boolean isRead = true; // default
                         if (indexRead != -1) {
                             isRead = cursor.getInt(indexRead) == 1;

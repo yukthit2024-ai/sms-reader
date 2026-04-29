@@ -48,7 +48,8 @@ more prompts
 *	Provide a option in the settings page to increase and decrease font sizes
 *	in the message lists, put a border around messages, so that we can differentiate each message.
 	Also when font size is changed, resize the list item size accordingly
-
+*	remove millisecond from dattime display on screen.  Also show month as three char code
+	example "yyyy-MMM-dd hh:mm:ss"
 
 
 
