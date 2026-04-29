@@ -46,6 +46,12 @@ more prompts
 *	Once a messaged is opened and viewed, make the message as "read" status and do not highlight it anymore
 *	after clicking to open an SMS message, update the SMS store to "read" status. it should not be highlighted anymore
 *	Provide a option in the settings page to increase and decrease font sizes
+*	in the message lists, put a border around messages, so that we can differentiate each message.
+	Also when font size is changed, resize the list item size accordingly
+
+
+
+
 
 output
 
