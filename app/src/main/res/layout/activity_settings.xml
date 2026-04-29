@@ -63,6 +63,13 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp" />
 
+    <Button
+        android:id="@+id/btnMakeDefaultSms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Make Default SMS App"
+        android:layout_marginBottom="16dp" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

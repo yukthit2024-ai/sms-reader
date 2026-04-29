@@ -40,6 +40,25 @@ public class SettingsActivity extends AppCompatActivity {
                 prefs.edit().putInt("font_size", currentSize[0]).apply();
             }
         });
+
+        android.widget.Button btnMakeDefaultSms = findViewById(R.id.btnMakeDefaultSms);
+        btnMakeDefaultSms.setOnClickListener(v -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                android.app.role.RoleManager roleManager = getSystemService(android.app.role.RoleManager.class);
+                if (roleManager.isRoleAvailable(android.app.role.RoleManager.ROLE_SMS)) {
+                    if (roleManager.isRoleHeld(android.app.role.RoleManager.ROLE_SMS)) {
+                        android.widget.Toast.makeText(this, "Already the default SMS app", android.widget.Toast.LENGTH_SHORT).show();
+                    } else {
+                        android.content.Intent roleRequestIntent = roleManager.createRequestRoleIntent(android.app.role.RoleManager.ROLE_SMS);
+                        startActivityForResult(roleRequestIntent, 101);
+                    }
+                }
+            } else {
+                android.content.Intent intent = new android.content.Intent(android.provider.Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+                intent.putExtra(android.provider.Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, getPackageName());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
