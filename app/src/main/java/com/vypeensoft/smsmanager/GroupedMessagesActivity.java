@@ -2,6 +2,7 @@ package com.vypeensoft.smsmanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +21,10 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         
         groupName = getIntent().getStringExtra("group_name");
         setTitle(groupName != null ? groupName : "Messages");
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         
         rvGroupedSmsList = findViewById(R.id.rvGroupedSmsList);
         rvGroupedSmsList.setLayoutManager(new LinearLayoutManager(this));
@@ -56,6 +61,16 @@ public class GroupedMessagesActivity extends AppCompatActivity {
             });
         });
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

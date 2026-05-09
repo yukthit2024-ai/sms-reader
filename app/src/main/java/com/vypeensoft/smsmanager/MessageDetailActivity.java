@@ -1,6 +1,7 @@
 package com.vypeensoft.smsmanager;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +10,11 @@ public class MessageDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_detail);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Message Details");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         
         TextView tvSender = findViewById(R.id.tvDetailSender);
         TextView tvTimestamp = findViewById(R.id.tvDetailTimestamp);
@@ -31,5 +37,14 @@ public class MessageDetailActivity extends AppCompatActivity {
                 sms.setRead(true);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
