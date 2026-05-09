@@ -198,9 +198,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") != PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            
             getSharedPreferences("prefs", MODE_PRIVATE).edit().putBoolean("permission_requested", true).apply();
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, "android.permission.WRITE_SMS"}, PERMISSION_REQUEST_READ_SMS);
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_SMS, 
+                    Manifest.permission.WRITE_SMS,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, PERMISSION_REQUEST_READ_SMS);
         } else {
             loadSms();
         }
@@ -293,18 +300,19 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_READ_SMS) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
-            if (grantResults.length > 0 && allGranted) {
+            boolean readSmsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
+            boolean writeSmsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) == PackageManager.PERMISSION_GRANTED;
+            boolean storageGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+            if (readSmsGranted && writeSmsGranted) {
                 loadSms();
             } else {
-                Toast.makeText(this, "Permission denied. Cannot load SMS.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "SMS permissions denied. Cannot load messages.", Toast.LENGTH_SHORT).show();
                 updateVisibility();
+            }
+
+            if (!storageGranted) {
+                Toast.makeText(this, "Storage permission denied. Export features will be limited.", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -64,7 +64,11 @@ more prompts
 		In settings, provide option for "Export folder" configuration
 		Export file name format "SMS-yyyyMMdd.hhmmss.xml" or "SMS-yyyyMMdd.hhmmss.json", "SMS-yyyyMMdd.hhmmss.csv"
 		xml format must be standard xml format for SMS exports used by other SMS exporting apps
-
+		--
+*	Give option to export in all three format by providing checkboxes for each.  By default all three checkboxes are to be selected
+*	The "Export Folder" option is to be removed from general settings page and moved to "Export page".
+*	Finally, On the export page, there should be Export folder settings, three export type checkboxes, followed by "Export" button
+*	On clicking export, a Toast message show with message "Storage permission required for export".  Please take such permissions at start of the application
 
 output
 
