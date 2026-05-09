@@ -105,16 +105,36 @@ public class MainActivity extends AppCompatActivity {
         rgViewGroup = findViewById(R.id.rgViewGroup);
 
         rvSmsList.setLayoutManager(new LinearLayoutManager(this));
-        smsAdapter = new SmsAdapter(new ArrayList<>(), sms -> {
-            if (isGroupView) {
-                Intent intent = new Intent(MainActivity.this, GroupedMessagesActivity.class);
-                intent.putExtra("group_name", extractSenderName(sms.getSender()));
-                intent.putExtra("search_query", etSearch.getText().toString().toLowerCase().trim());
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(MainActivity.this, MessageDetailActivity.class);
-                intent.putExtra("sms_data", sms);
-                startActivity(intent);
+        smsAdapter = new SmsAdapter(new ArrayList<>(), new SmsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(SmsModel sms) {
+                if (isGroupView) {
+                    Intent intent = new Intent(MainActivity.this, GroupedMessagesActivity.class);
+                    intent.putExtra("group_name", extractSenderName(sms.getSender()));
+                    intent.putExtra("search_query", etSearch.getText().toString().toLowerCase().trim());
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, MessageDetailActivity.class);
+                    intent.putExtra("sms_data", sms);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onDeleteClick(SmsModel sms) {
+                new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
+                    .setTitle("Delete Message")
+                    .setMessage("Are you sure you want to delete this message?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        SmsRepository.deleteSms(MainActivity.this, sms.getId(), () -> {
+                            runOnUiThread(() -> {
+                                Toast.makeText(MainActivity.this, "Message deleted", Toast.LENGTH_SHORT).show();
+                                loadSms();
+                            });
+                        });
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
             }
         });
         rvSmsList.setAdapter(smsAdapter);

@@ -37,4 +37,13 @@
             android:textIsSelectable="true"
             android:lineSpacingExtra="4dp" />
     </ScrollView>
+
+    <Button
+        android:id="@+id/btnDeleteDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete Message"
+        android:backgroundTint="#E74C3C"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

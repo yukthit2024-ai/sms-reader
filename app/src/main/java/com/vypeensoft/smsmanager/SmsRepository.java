@@ -68,4 +68,18 @@ public class SmsRepository {
             }
         }).start();
     }
+
+    public static void deleteSms(Context context, String messageId, Runnable onSuccess) {
+        new Thread(() -> {
+            try {
+                Uri uriSms = Uri.parse("content://sms/" + messageId);
+                int rowsDeleted = context.getContentResolver().delete(uriSms, null, null);
+                if (rowsDeleted > 0 && onSuccess != null) {
+                    onSuccess.run();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 }

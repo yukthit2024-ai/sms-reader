@@ -51,7 +51,8 @@ more prompts
 *	remove millisecond from dattime display on screen.  Also show month as three char code
 	example "yyyy-MMM-dd hh:mm:ss"
 *	Apart from main screen, please provide a back arrow button on top left corner of all screens
-
+*	on each message, provide a delete button, so that clciking on it will delete the relevant SMS from the underlying message store
+*	the delete confirmation dialog is to be configurable in the settings.  If settings is for "No confirmation dialog", then delete the SMS directly
 
 
 

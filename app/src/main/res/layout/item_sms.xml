@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/tvTimestamp"
+                android:layout_toStartOf="@+id/btnDelete"
                 android:text="Sender Name"
                 android:textColor="#2C3E50"
                 android:textSize="17sp"
@@ -35,10 +35,22 @@
                 android:id="@+id/tvTimestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_below="@id/tvSender"
+                android:layout_alignParentStart="true"
                 android:text="2024-04-18 12:00:00"
                 android:textColor="#95A5A6"
                 android:textSize="12sp" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_delete"
+                android:contentDescription="Delete"
+                app:tint="#E74C3C" />
         </RelativeLayout>
 
         <TextView

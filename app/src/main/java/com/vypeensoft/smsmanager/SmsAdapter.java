@@ -13,6 +13,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
     public interface OnItemClickListener {
         void onItemClick(SmsModel sms);
+        void onDeleteClick(SmsModel sms);
     }
 
     private List<SmsModel> smsList;
@@ -81,6 +82,12 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
                 listener.onItemClick(sms);
             }
         });
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDeleteClick(sms);
+            }
+        });
     }
 
     @Override
@@ -90,12 +97,14 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
 
     public static class SmsViewHolder extends RecyclerView.ViewHolder {
         TextView tvSender, tvTimestamp, tvBody;
+        android.widget.ImageButton btnDelete;
 
         public SmsViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSender = itemView.findViewById(R.id.tvSender);
             tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
             tvBody = itemView.findViewById(R.id.tvBody);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }

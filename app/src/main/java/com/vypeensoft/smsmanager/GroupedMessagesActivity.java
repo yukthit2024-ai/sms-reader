@@ -29,10 +29,30 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         rvGroupedSmsList = findViewById(R.id.rvGroupedSmsList);
         rvGroupedSmsList.setLayoutManager(new LinearLayoutManager(this));
         
-        adapter = new SmsAdapter(new ArrayList<>(), sms -> {
-            Intent intent = new Intent(GroupedMessagesActivity.this, MessageDetailActivity.class);
-            intent.putExtra("sms_data", sms);
-            startActivity(intent);
+        adapter = new SmsAdapter(new ArrayList<>(), new SmsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(SmsModel sms) {
+                Intent intent = new Intent(GroupedMessagesActivity.this, MessageDetailActivity.class);
+                intent.putExtra("sms_data", sms);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onDeleteClick(SmsModel sms) {
+                new androidx.appcompat.app.AlertDialog.Builder(GroupedMessagesActivity.this)
+                    .setTitle("Delete Message")
+                    .setMessage("Are you sure you want to delete this message?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        SmsRepository.deleteSms(GroupedMessagesActivity.this, sms.getId(), () -> {
+                            runOnUiThread(() -> {
+                                android.widget.Toast.makeText(GroupedMessagesActivity.this, "Message deleted", android.widget.Toast.LENGTH_SHORT).show();
+                                loadGroupedMessages();
+                            });
+                        });
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+            }
         });
         rvGroupedSmsList.setAdapter(adapter);
         
