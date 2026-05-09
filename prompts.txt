@@ -55,6 +55,10 @@ more prompts
 *	the delete confirmation dialog is to be configurable in the settings.  If settings is for "No confirmation dialog", then delete the SMS directly
 *	In settings, provide a button to open this app's setings.  If you can provide steps to make this app as the deafult SMS app, it would be even better.
 *	But a border around the settings for "delete confirmation"
+*	Multi-select items inside grouped messages
+*	Once mutiple itmes are selcted, show options like "Select All", "Delete", to act on those selected messages
+*	When "Select All" is selected and "Delete" done, it honors the "Confirm before delete" option.
+	But If user select few rows manually and hits delete, it is still asking for confirmation, even though settings says not to ask for confirmation.
 
 
 output
