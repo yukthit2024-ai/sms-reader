@@ -197,17 +197,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            
+        boolean hasReadSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
+        boolean hasWriteSms = ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") == PackageManager.PERMISSION_GRANTED;
+        boolean hasStorage = true;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            hasStorage = android.os.Environment.isExternalStorageManager();
+        } else {
+            hasStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
+
+        if (!hasReadSms || !hasWriteSms || !hasStorage) {
             getSharedPreferences("prefs", MODE_PRIVATE).edit().putBoolean("permission_requested", true).apply();
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.READ_SMS, 
-                    "android.permission.WRITE_SMS",
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-            }, PERMISSION_REQUEST_READ_SMS);
+            
+            List<String> permissions = new ArrayList<>();
+            if (!hasReadSms) permissions.add(Manifest.permission.READ_SMS);
+            if (!hasWriteSms) permissions.add("android.permission.WRITE_SMS");
+            
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                if (!hasStorage) {
+                    try {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                        intent.addCategory("android.intent.category.DEFAULT");
+                        intent.setData(Uri.parse(String.format("package:%s", getPackageName())));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Intent intent = new Intent();
+                        intent.setAction(android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                        startActivity(intent);
+                    }
+                }
+            } else {
+                if (!hasStorage) {
+                    permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                }
+            }
+
+            if (!permissions.isEmpty()) {
+                ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), PERMISSION_REQUEST_READ_SMS);
+            }
         } else {
             loadSms();
         }
