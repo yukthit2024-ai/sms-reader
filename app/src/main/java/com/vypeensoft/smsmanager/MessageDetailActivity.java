@@ -39,7 +39,6 @@ public class MessageDetailActivity extends AppCompatActivity {
 
             android.widget.Button btnDelete = findViewById(R.id.btnDeleteDetail);
             btnDelete.setOnClickListener(v -> {
-                android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
                 boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
 
                 if (confirmDelete) {
