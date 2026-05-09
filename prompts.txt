@@ -53,7 +53,8 @@ more prompts
 *	Apart from main screen, please provide a back arrow button on top left corner of all screens
 *	on each message, provide a delete button, so that clciking on it will delete the relevant SMS from the underlying message store
 *	the delete confirmation dialog is to be configurable in the settings.  If settings is for "No confirmation dialog", then delete the SMS directly
-
+*	In settings, provide a button to open this app's setings.  If you can provide steps to make this app as the deafult SMS app, it would be even better.
+*	But a border around the settings for "delete confirmation"
 
 
 output
