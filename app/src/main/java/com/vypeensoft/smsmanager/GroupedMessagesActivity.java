@@ -139,16 +139,24 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     }
 
     private void deleteSelectedMessages() {
+        android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
+        boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
         int count = adapter.getSelectedCount();
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Delete Messages")
-            .setMessage("Are you sure you want to delete " + count + " messages?")
-            .setPositiveButton("Delete", (dialog, which) -> {
-                List<String> idsToDelete = new ArrayList<>(adapter.getSelectedIds());
-                performBulkDelete(idsToDelete);
-            })
-            .setNegativeButton("Cancel", null)
-            .show();
+
+        if (confirmDelete) {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Delete Messages")
+                .setMessage("Are you sure you want to delete " + count + " messages?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    List<String> idsToDelete = new ArrayList<>(adapter.getSelectedIds());
+                    performBulkDelete(idsToDelete);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+        } else {
+            List<String> idsToDelete = new ArrayList<>(adapter.getSelectedIds());
+            performBulkDelete(idsToDelete);
+        }
     }
 
     private void performBulkDelete(List<String> ids) {
