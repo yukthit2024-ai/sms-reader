@@ -47,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
             prefs.edit().putBoolean("confirm_delete", isChecked).apply();
         });
 
-        android:widget.Button btnOpenSystemSettings = findViewById(R.id.btnOpenSystemSettings);
+        android.widget.Button btnOpenSystemSettings = findViewById(R.id.btnOpenSystemSettings);
         btnOpenSystemSettings.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             android.net.Uri uri = android.net.Uri.fromParts("package", getPackageName(), null);

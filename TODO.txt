@@ -1,3 +1,8 @@
-group messages by sender - If 3rd character is a '-', then remove first three characters from the sender name and then group them.
-When in group mode, show sender name and latest message from that group in the main screen list 
-When user clicks on it, open the group in new window, containing all messages from that group
+Multi-select items inside grouped messages
+Once mutiple itmes are selcted, show options like "Select All", "Delete", to act on those selected messages
+On left side menu, show export menu option
+	The use can opt for XML or JSON or CSV export format.
+	In settings, provide option for "Export folder" configuration
+	Export file name format "SMS-yyyyMMdd.hhmmss.xml" or "SMS-yyyyMMdd.hhmmss.json", "SMS-yyyyMMdd.hhmmss.csv"
+	xml format must be standard xml format for SMS exports
+	
