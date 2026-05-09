@@ -122,19 +122,30 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDeleteClick(SmsModel sms) {
-                new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Delete Message")
-                    .setMessage("Are you sure you want to delete this message?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        SmsRepository.deleteSms(MainActivity.this, sms.getId(), () -> {
-                            runOnUiThread(() -> {
-                                Toast.makeText(MainActivity.this, "Message deleted", Toast.LENGTH_SHORT).show();
-                                loadSms();
-                            });
-                        });
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+                android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
+                boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+
+                if (confirmDelete) {
+                    new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Delete Message")
+                        .setMessage("Are you sure you want to delete this message?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            performDelete(sms);
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+                } else {
+                    performDelete(sms);
+                }
+            }
+
+            private void performDelete(SmsModel sms) {
+                SmsRepository.deleteSms(MainActivity.this, sms.getId(), () -> {
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, "Message deleted", Toast.LENGTH_SHORT).show();
+                        loadSms();
+                    });
+                });
             }
         });
         rvSmsList.setAdapter(smsAdapter);

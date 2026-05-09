@@ -41,6 +41,12 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        androidx.appcompat.widget.SwitchCompat switchConfirmDelete = findViewById(R.id.switchConfirmDelete);
+        switchConfirmDelete.setChecked(prefs.getBoolean("confirm_delete", true));
+        switchConfirmDelete.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("confirm_delete", isChecked).apply();
+        });
+
         android.widget.Button btnMakeDefaultSms = findViewById(R.id.btnMakeDefaultSms);
         btnMakeDefaultSms.setOnClickListener(v -> {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {

@@ -39,21 +39,32 @@ public class MessageDetailActivity extends AppCompatActivity {
 
             android.widget.Button btnDelete = findViewById(R.id.btnDeleteDetail);
             btnDelete.setOnClickListener(v -> {
-                new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Delete Message")
-                    .setMessage("Are you sure you want to delete this message?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        SmsRepository.deleteSms(this, sms.getId(), () -> {
-                            runOnUiThread(() -> {
-                                android.widget.Toast.makeText(this, "Message deleted", android.widget.Toast.LENGTH_SHORT).show();
-                                finish();
-                            });
-                        });
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+                android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
+                boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+
+                if (confirmDelete) {
+                    new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Delete Message")
+                        .setMessage("Are you sure you want to delete this message?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            performDelete(sms);
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+                } else {
+                    performDelete(sms);
+                }
             });
         }
+    }
+
+    private void performDelete(SmsModel sms) {
+        SmsRepository.deleteSms(this, sms.getId(), () -> {
+            runOnUiThread(() -> {
+                android.widget.Toast.makeText(this, "Message deleted", android.widget.Toast.LENGTH_SHORT).show();
+                finish();
+            });
+        });
     }
 
     @Override

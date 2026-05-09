@@ -39,19 +39,30 @@ public class GroupedMessagesActivity extends AppCompatActivity {
 
             @Override
             public void onDeleteClick(SmsModel sms) {
-                new androidx.appcompat.app.AlertDialog.Builder(GroupedMessagesActivity.this)
-                    .setTitle("Delete Message")
-                    .setMessage("Are you sure you want to delete this message?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        SmsRepository.deleteSms(GroupedMessagesActivity.this, sms.getId(), () -> {
-                            runOnUiThread(() -> {
-                                android.widget.Toast.makeText(GroupedMessagesActivity.this, "Message deleted", android.widget.Toast.LENGTH_SHORT).show();
-                                loadGroupedMessages();
-                            });
-                        });
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
+                android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
+                boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+
+                if (confirmDelete) {
+                    new androidx.appcompat.app.AlertDialog.Builder(GroupedMessagesActivity.this)
+                        .setTitle("Delete Message")
+                        .setMessage("Are you sure you want to delete this message?")
+                        .setPositiveButton("Delete", (dialog, which) -> {
+                            performDelete(sms);
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+                } else {
+                    performDelete(sms);
+                }
+            }
+
+            private void performDelete(SmsModel sms) {
+                SmsRepository.deleteSms(GroupedMessagesActivity.this, sms.getId(), () -> {
+                    runOnUiThread(() -> {
+                        android.widget.Toast.makeText(GroupedMessagesActivity.this, "Message deleted", android.widget.Toast.LENGTH_SHORT).show();
+                        loadGroupedMessages();
+                    });
+                });
             }
         });
         rvGroupedSmsList.setAdapter(adapter);
