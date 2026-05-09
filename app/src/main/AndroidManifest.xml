@@ -34,6 +34,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".HelpActivity" />
         <activity android:name=".AboutActivity" />
+        <activity android:name=".ExportActivity" />
 
         <receiver android:name=".SmsReceiver"
             android:permission="android.permission.BROADCAST_SMS"

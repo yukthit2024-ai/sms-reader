@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_about) {
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
             } else if (id == R.id.nav_export) {
-                showExportDialog();
+                startActivity(new Intent(MainActivity.this, ExportActivity.class));
             }
             drawerLayout.closeDrawers();
             return true;
@@ -76,38 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         checkPermissions();
-    }
-
-    private void showExportDialog() {
-        String[] formats = {"XML", "JSON", "CSV"};
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Select Export Format")
-            .setItems(formats, (dialog, which) -> {
-                String format = formats[which];
-                checkStoragePermissionsAndExport(format);
-            })
-            .show();
-    }
-
-    private void checkStoragePermissionsAndExport(String format) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 102);
-            // After permission is granted, the user will have to click export again for simplicity here
-        } else {
-            performExport(format);
-        }
-    }
-
-    private void performExport(String format) {
-        android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
-        String defaultPath = new java.io.File(android.os.Environment.getExternalStorageDirectory(), "SMS_Reader_Exports").getAbsolutePath();
-        String exportPath = prefs.getString("export_path", defaultPath);
-
-        SmsRepository.exportMessages(this, allSmsList, format, exportPath, () -> {
-            runOnUiThread(() -> {
-                Toast.makeText(this, "Messages exported to: " + exportPath, Toast.LENGTH_LONG).show();
-            });
-        });
     }
 
     @Override

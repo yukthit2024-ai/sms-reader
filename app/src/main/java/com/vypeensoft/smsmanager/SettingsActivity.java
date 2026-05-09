@@ -55,20 +55,6 @@ public class SettingsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        android.widget.EditText etExportPath = findViewById(R.id.etExportPath);
-        android.widget.Button btnSaveExportPath = findViewById(R.id.btnSaveExportPath);
-        
-        String defaultPath = new java.io.File(android.os.Environment.getExternalStorageDirectory(), "SMS_Reader_Exports").getAbsolutePath();
-        etExportPath.setText(prefs.getString("export_path", defaultPath));
-        
-        btnSaveExportPath.setOnClickListener(v -> {
-            String newPath = etExportPath.getText().toString().trim();
-            if (!newPath.isEmpty()) {
-                prefs.edit().putString("export_path", newPath).apply();
-                android.widget.Toast.makeText(this, "Export path saved", android.widget.Toast.LENGTH_SHORT).show();
-            }
-        });
-
         android.widget.Button btnMakeDefaultSms = findViewById(R.id.btnMakeDefaultSms);
         btnMakeDefaultSms.setOnClickListener(v -> {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {

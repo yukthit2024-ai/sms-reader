@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F5F7FA">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Export Messages"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#2C3E50"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Export Folder"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <EditText
+            android:id="@+id/etExportPath"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="e.g. /storage/emulated/0/Documents/SMS"
+            android:textSize="14sp"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btnSaveExportPath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select Formats"
+        android:textSize="18sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp" />
+
+    <CheckBox
+        android:id="@+id/cbXml"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="XML Format"
+        android:checked="true"
+        android:textSize="16sp" />
+
+    <CheckBox
+        android:id="@+id/cbJson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="JSON Format"
+        android:checked="true"
+        android:textSize="16sp" />
+
+    <CheckBox
+        android:id="@+id/cbCsv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CSV Format"
+        android:checked="true"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btnStartExport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Export Now"
+        android:layout_marginTop="32dp"
+        android:padding="12dp"
+        android:backgroundTint="#3498DB"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>
