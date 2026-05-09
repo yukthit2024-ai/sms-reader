@@ -35,7 +35,7 @@ public class ExportActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
+        org.json.JSONObject settings = SettingsManager.loadSettings(this);
         etExportPath = findViewById(R.id.etExportPath);
         cbXml = findViewById(R.id.cbXml);
         cbJson = findViewById(R.id.cbJson);
@@ -43,18 +43,30 @@ public class ExportActivity extends AppCompatActivity {
         Button btnSaveExportPath = findViewById(R.id.btnSaveExportPath);
         Button btnStartExport = findViewById(R.id.btnStartExport);
 
-        String defaultPath = new File(Environment.getExternalStorageDirectory(), "SMS_Reader_Exports").getAbsolutePath();
-        etExportPath.setText(prefs.getString("export_path", defaultPath));
+        etExportPath.setText(settings.optString("export_path", SettingsManager.getDefaultExportPath()));
+        cbXml.setChecked(settings.optBoolean("export_format_xml", true));
+        cbJson.setChecked(settings.optBoolean("export_format_json", true));
+        cbCsv.setChecked(settings.optBoolean("export_format_csv", true));
 
         btnSaveExportPath.setOnClickListener(v -> {
             String newPath = etExportPath.getText().toString().trim();
             if (!newPath.isEmpty()) {
-                prefs.edit().putString("export_path", newPath).apply();
-                Toast.makeText(this, "Export path saved", Toast.LENGTH_SHORT).show();
+                try {
+                    settings.put("export_path", newPath);
+                    SettingsManager.saveSettings(this, settings);
+                    Toast.makeText(this, "Export path saved", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {}
             }
         });
 
         btnStartExport.setOnClickListener(v -> {
+            // Save checkbox states before exporting
+            try {
+                settings.put("export_format_xml", cbXml.isChecked());
+                settings.put("export_format_json", cbJson.isChecked());
+                settings.put("export_format_csv", cbCsv.isChecked());
+                SettingsManager.saveSettings(this, settings);
+            } catch (Exception e) {}
             checkPermissionsAndExport();
         });
 

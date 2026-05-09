@@ -70,9 +70,14 @@ more prompts
 *	Finally, On the export page, there should be Export folder settings, three export type checkboxes, followed by "Export" button
 *	On clicking export, a Toast message show with message "Storage permission required for export".  Please take such permissions at start of the application
 
-*	
+*	Save all settings at /sdcard/Vypeensoft/SMS_Manager/settings/settings.json
+		The fields to save are 
+		Font Size
+		Confirm before deletion
+		Export Folder
+		Formats for export - 3 values.
+		The export Folder should have default value of "/sdcard/Vypeensoft/SMS_Manager/export/"
 
-output
 
 
 

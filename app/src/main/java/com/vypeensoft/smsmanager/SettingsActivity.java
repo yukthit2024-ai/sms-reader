@@ -15,9 +15,8 @@ public class SettingsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
-        // Default font size can be 16
-        final int[] currentSize = {prefs.getInt("font_size", 16)};
+        org.json.JSONObject settings = SettingsManager.loadSettings(this);
+        final int[] currentSize = {settings.optInt("font_size", 16)};
 
         android.widget.TextView tvFontSize = findViewById(R.id.tvFontSize);
         android.widget.Button btnDecreaseFont = findViewById(R.id.btnDecreaseFont);
@@ -29,7 +28,10 @@ public class SettingsActivity extends AppCompatActivity {
             if (currentSize[0] > 10) { // Minimum size 10
                 currentSize[0] -= 2;
                 tvFontSize.setText(String.valueOf(currentSize[0]));
-                prefs.edit().putInt("font_size", currentSize[0]).apply();
+                try {
+                    settings.put("font_size", currentSize[0]);
+                    SettingsManager.saveSettings(this, settings);
+                } catch (Exception e) {}
             }
         });
 
@@ -37,14 +39,20 @@ public class SettingsActivity extends AppCompatActivity {
             if (currentSize[0] < 36) { // Maximum size 36
                 currentSize[0] += 2;
                 tvFontSize.setText(String.valueOf(currentSize[0]));
-                prefs.edit().putInt("font_size", currentSize[0]).apply();
+                try {
+                    settings.put("font_size", currentSize[0]);
+                    SettingsManager.saveSettings(this, settings);
+                } catch (Exception e) {}
             }
         });
 
         androidx.appcompat.widget.SwitchCompat switchConfirmDelete = findViewById(R.id.switchConfirmDelete);
-        switchConfirmDelete.setChecked(prefs.getBoolean("confirm_delete", true));
+        switchConfirmDelete.setChecked(settings.optBoolean("confirm_delete", true));
         switchConfirmDelete.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("confirm_delete", isChecked).apply();
+            try {
+                settings.put("confirm_delete", isChecked);
+                SettingsManager.saveSettings(this, settings);
+            } catch (Exception e) {}
         });
 
         android.widget.Button btnOpenSystemSettings = findViewById(R.id.btnOpenSystemSettings);

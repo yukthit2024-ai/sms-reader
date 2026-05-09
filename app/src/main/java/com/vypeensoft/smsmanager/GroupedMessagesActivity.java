@@ -46,8 +46,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
 
             @Override
             public void onDeleteClick(SmsModel sms) {
-                android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
-                boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+                boolean confirmDelete = SettingsManager.isConfirmDelete(GroupedMessagesActivity.this);
 
                 if (confirmDelete) {
                     new androidx.appcompat.app.AlertDialog.Builder(GroupedMessagesActivity.this)
@@ -139,8 +138,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     }
 
     private void deleteSelectedMessages() {
-        android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
-        boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+        boolean confirmDelete = SettingsManager.isConfirmDelete(this);
         int count = adapter.getSelectedCount();
 
         if (confirmDelete) {

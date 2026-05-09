@@ -26,8 +26,7 @@ public class MessageDetailActivity extends AppCompatActivity {
             tvTimestamp.setText(sms.getTimestamp());
             tvBody.setText(sms.getBody());
             
-            android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
-            int fontSize = prefs.getInt("font_size", 16);
+            int fontSize = SettingsManager.getFontSize(this);
             tvSender.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, fontSize + 4);
             tvBody.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, fontSize);
             tvTimestamp.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, Math.max(10, fontSize - 2));
@@ -39,7 +38,7 @@ public class MessageDetailActivity extends AppCompatActivity {
 
             android.widget.Button btnDelete = findViewById(R.id.btnDeleteDetail);
             btnDelete.setOnClickListener(v -> {
-                boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+                boolean confirmDelete = SettingsManager.isConfirmDelete(this);
 
                 if (confirmDelete) {
                     new androidx.appcompat.app.AlertDialog.Builder(this)

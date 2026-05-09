@@ -124,8 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDeleteClick(SmsModel sms) {
-                android.content.SharedPreferences prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE);
-                boolean confirmDelete = prefs.getBoolean("confirm_delete", true);
+                boolean confirmDelete = SettingsManager.isConfirmDelete(MainActivity.this);
 
                 if (confirmDelete) {
                     new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
