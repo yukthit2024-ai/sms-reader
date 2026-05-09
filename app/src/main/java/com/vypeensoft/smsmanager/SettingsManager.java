@@ -28,7 +28,9 @@ public class SettingsManager {
     public static JSONObject loadSettings(Context context) {
         File file = getSettingsFile();
         if (!file.exists()) {
-            return createDefaultSettings();
+            JSONObject defaultSettings = createDefaultSettings();
+            saveSettings(context, defaultSettings);
+            return defaultSettings;
         }
 
         try (FileInputStream fis = new FileInputStream(file)) {

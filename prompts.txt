@@ -77,7 +77,7 @@ more prompts
 		Export Folder
 		Formats for export - 3 values.
 		The export Folder should have default value of "/sdcard/Vypeensoft/SMS_Manager/export/"
-
+*	On first run, create a new settings.json and place default values in it
 
 
 
