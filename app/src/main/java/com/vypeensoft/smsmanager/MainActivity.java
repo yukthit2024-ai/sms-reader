@@ -139,6 +139,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            @Override
+            public void onItemLongClick(SmsModel sms) {
+                // Placeholder for multi-select in MainActivity if needed
+            }
+
             private void performDelete(SmsModel sms) {
                 SmsRepository.deleteSms(MainActivity.this, sms.getId(), () -> {
                     runOnUiThread(() -> {

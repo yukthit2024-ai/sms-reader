@@ -2,8 +2,10 @@ package com.vypeensoft.smsmanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
     private RecyclerView rvGroupedSmsList;
     private SmsAdapter adapter;
     private String groupName;
+    private ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +35,13 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         adapter = new SmsAdapter(new ArrayList<>(), new SmsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(SmsModel sms) {
-                Intent intent = new Intent(GroupedMessagesActivity.this, MessageDetailActivity.class);
-                intent.putExtra("sms_data", sms);
-                startActivity(intent);
+                if (adapter.isSelectionMode()) {
+                    toggleSelection(sms.getId());
+                } else {
+                    Intent intent = new Intent(GroupedMessagesActivity.this, MessageDetailActivity.class);
+                    intent.putExtra("sms_data", sms);
+                    startActivity(intent);
+                }
             }
 
             @Override
@@ -56,6 +63,14 @@ public class GroupedMessagesActivity extends AppCompatActivity {
                 }
             }
 
+            @Override
+            public void onItemLongClick(SmsModel sms) {
+                if (!adapter.isSelectionMode()) {
+                    startSelectionMode();
+                }
+                toggleSelection(sms.getId());
+            }
+
             private void performDelete(SmsModel sms) {
                 SmsRepository.deleteSms(GroupedMessagesActivity.this, sms.getId(), () -> {
                     runOnUiThread(() -> {
@@ -68,6 +83,86 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         rvGroupedSmsList.setAdapter(adapter);
         
         loadGroupedMessages();
+    }
+
+    private void startSelectionMode() {
+        adapter.setSelectionMode(true);
+        actionMode = startSupportActionMode(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.menu_selection, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                if (item.getItemId() == R.id.action_select_all) {
+                    adapter.selectAll();
+                    updateActionModeTitle(mode);
+                    return true;
+                } else if (item.getItemId() == R.id.action_delete) {
+                    deleteSelectedMessages();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                adapter.setSelectionMode(false);
+                actionMode = null;
+            }
+        });
+        updateActionModeTitle(actionMode);
+    }
+
+    private void toggleSelection(String id) {
+        adapter.toggleSelection(id);
+        if (adapter.getSelectedCount() == 0) {
+            if (actionMode != null) {
+                actionMode.finish();
+            }
+        } else {
+            updateActionModeTitle(actionMode);
+        }
+    }
+
+    private void updateActionModeTitle(ActionMode mode) {
+        if (mode != null) {
+            mode.setTitle(adapter.getSelectedCount() + " selected");
+        }
+    }
+
+    private void deleteSelectedMessages() {
+        int count = adapter.getSelectedCount();
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Delete Messages")
+            .setMessage("Are you sure you want to delete " + count + " messages?")
+            .setPositiveButton("Delete", (dialog, which) -> {
+                List<String> idsToDelete = new ArrayList<>(adapter.getSelectedIds());
+                performBulkDelete(idsToDelete);
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void performBulkDelete(List<String> ids) {
+        new Thread(() -> {
+            for (String id : ids) {
+                // We don't use the callback here for each one, just once at the end
+                SmsRepository.deleteSms(this, id, null);
+            }
+            runOnUiThread(() -> {
+                android.widget.Toast.makeText(this, ids.size() + " messages deleted", android.widget.Toast.LENGTH_SHORT).show();
+                if (actionMode != null) actionMode.finish();
+                loadGroupedMessages();
+            });
+        }).start();
     }
     
     private void loadGroupedMessages() {

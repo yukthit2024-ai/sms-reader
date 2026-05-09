@@ -14,15 +14,59 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
     public interface OnItemClickListener {
         void onItemClick(SmsModel sms);
         void onDeleteClick(SmsModel sms);
+        void onItemLongClick(SmsModel sms);
     }
 
     private List<SmsModel> smsList;
     private OnItemClickListener listener;
     private boolean showTrimmedSender = false;
+    private java.util.Set<String> selectedIds = new java.util.HashSet<>();
+    private boolean isSelectionMode = false;
 
     public SmsAdapter(List<SmsModel> smsList, OnItemClickListener listener) {
         this.smsList = smsList;
         this.listener = listener;
+    }
+
+    public void setSelectionMode(boolean selectionMode) {
+        this.isSelectionMode = selectionMode;
+        if (!selectionMode) {
+            selectedIds.clear();
+        }
+        notifyDataSetChanged();
+    }
+
+    public boolean isSelectionMode() {
+        return isSelectionMode;
+    }
+
+    public void toggleSelection(String id) {
+        if (selectedIds.contains(id)) {
+            selectedIds.remove(id);
+        } else {
+            selectedIds.add(id);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void selectAll() {
+        for (SmsModel sms : smsList) {
+            selectedIds.add(sms.getId());
+        }
+        notifyDataSetChanged();
+    }
+
+    public void clearSelection() {
+        selectedIds.clear();
+        notifyDataSetChanged();
+    }
+
+    public java.util.Set<String> getSelectedIds() {
+        return selectedIds;
+    }
+
+    public int getSelectedCount() {
+        return selectedIds.size();
     }
 
     public void setShowTrimmedSender(boolean showTrimmedSender) {
@@ -59,7 +103,11 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         holder.tvBody.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, fontSize);
         holder.tvTimestamp.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, Math.max(10, fontSize - 4));
         
-        if (!sms.isRead()) {
+        if (isSelectionMode && selectedIds.contains(sms.getId())) {
+            ((com.google.android.material.card.MaterialCardView) holder.itemView).setCardBackgroundColor(android.graphics.Color.parseColor("#D1E3FF")); // Darker blue for selected
+            ((com.google.android.material.card.MaterialCardView) holder.itemView).setStrokeColor(android.graphics.Color.parseColor("#3498DB"));
+            ((com.google.android.material.card.MaterialCardView) holder.itemView).setStrokeWidth(4);
+        } else if (!sms.isRead()) {
             holder.tvSender.setTypeface(null, android.graphics.Typeface.BOLD);
             holder.tvBody.setTypeface(null, android.graphics.Typeface.BOLD);
             holder.tvSender.setTextColor(android.graphics.Color.parseColor("#000000"));
@@ -83,6 +131,15 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             }
         });
 
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) {
+                listener.onItemLongClick(sms);
+                return true;
+            }
+            return false;
+        });
+
+        holder.btnDelete.setVisibility(isSelectionMode ? View.GONE : View.VISIBLE);
         holder.btnDelete.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDeleteClick(sms);
