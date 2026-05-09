@@ -70,6 +70,8 @@ more prompts
 *	Finally, On the export page, there should be Export folder settings, three export type checkboxes, followed by "Export" button
 *	On clicking export, a Toast message show with message "Storage permission required for export".  Please take such permissions at start of the application
 
+*	
+
 output
 
 

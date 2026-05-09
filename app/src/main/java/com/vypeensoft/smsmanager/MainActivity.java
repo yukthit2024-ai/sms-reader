@@ -198,13 +198,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             
             getSharedPreferences("prefs", MODE_PRIVATE).edit().putBoolean("permission_requested", true).apply();
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.READ_SMS, 
-                    Manifest.permission.WRITE_SMS,
+                    "android.permission.WRITE_SMS",
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE
             }, PERMISSION_REQUEST_READ_SMS);
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_READ_SMS) {
             boolean readSmsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
-            boolean writeSmsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_SMS) == PackageManager.PERMISSION_GRANTED;
+            boolean writeSmsGranted = ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") == PackageManager.PERMISSION_GRANTED;
             boolean storageGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
             if (readSmsGranted && writeSmsGranted) {
