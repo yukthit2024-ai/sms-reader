@@ -82,4 +82,69 @@ public class SmsRepository {
             }
         }).start();
     }
+
+    public static void exportMessages(Context context, List<SmsModel> smsList, String format, String exportPath, Runnable onSuccess) {
+        new Thread(() -> {
+            try {
+                java.io.File dir = new java.io.File(exportPath);
+                if (!dir.exists()) dir.mkdirs();
+
+                String timeStamp = new SimpleDateFormat("yyyyMMdd.HHmmss", Locale.getDefault()).format(new Date());
+                String fileName = "SMS-" + timeStamp + "." + format.toLowerCase();
+                java.io.File file = new java.io.File(dir, fileName);
+
+                java.io.FileWriter writer = new java.io.FileWriter(file);
+                if ("xml".equalsIgnoreCase(format)) {
+                    writer.write("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n");
+                    writer.write("<smses count=\"" + smsList.size() + "\">\n");
+                    for (SmsModel sms : smsList) {
+                        writer.write("  <sms address=\"" + escapeXml(sms.getSender()) + 
+                                     "\" body=\"" + escapeXml(sms.getBody()) + 
+                                     "\" date=\"" + sms.getTimestamp() + 
+                                     "\" read=\"" + (sms.isRead() ? "1" : "0") + "\" />\n");
+                    }
+                    writer.write("</smses>");
+                } else if ("json".equalsIgnoreCase(format)) {
+                    writer.write("[\n");
+                    for (int i = 0; i < smsList.size(); i++) {
+                        SmsModel sms = smsList.get(i);
+                        writer.write("  {\n");
+                        writer.write("    \"sender\": \"" + escapeJson(sms.getSender()) + "\",\n");
+                        writer.write("    \"body\": \"" + escapeJson(sms.getBody()) + "\",\n");
+                        writer.write("    \"timestamp\": \"" + sms.getTimestamp() + "\",\n");
+                        writer.write("    \"read\": " + sms.isRead() + "\n");
+                        writer.write("  }" + (i == smsList.size() - 1 ? "" : ",") + "\n");
+                    }
+                    writer.write("]");
+                } else if ("csv".equalsIgnoreCase(format)) {
+                    writer.write("Sender,Body,Timestamp,Read\n");
+                    for (SmsModel sms : smsList) {
+                        writer.write("\"" + escapeCsv(sms.getSender()) + "\",\"" + 
+                                     escapeCsv(sms.getBody()) + "\",\"" + 
+                                     sms.getTimestamp() + "\"," + 
+                                     sms.isRead() + "\n");
+                    }
+                }
+                writer.close();
+                if (onSuccess != null) onSuccess.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private static String escapeXml(String str) {
+        if (str == null) return "";
+        return str.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&apos;");
+    }
+
+    private static String escapeJson(String str) {
+        if (str == null) return "";
+        return str.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r");
+    }
+
+    private static String escapeCsv(String str) {
+        if (str == null) return "";
+        return str.replace("\"", "\"\"");
+    }
 }
