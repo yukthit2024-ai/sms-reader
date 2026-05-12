@@ -181,7 +181,10 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         SmsRepository.getAllSms(getContentResolver(), smsList -> {
             List<SmsModel> filtered = new ArrayList<>();
             for (SmsModel sms : smsList) {
-                if (MainActivity.getGroupKey(sms).equals(groupKey)) {
+                String currentGroupKey = MainActivity.getGroupKey(sms);
+                String currentExtractedName = MainActivity.extractSenderName(sms.getSender());
+                
+                if (currentGroupKey.equals(groupKey) || currentExtractedName.equals(groupKey)) {
                     if (finalSearchQuery.isEmpty() || 
                         sms.getSender().toLowerCase().contains(finalSearchQuery) || 
                         sms.getBody().toLowerCase().contains(finalSearchQuery) ||

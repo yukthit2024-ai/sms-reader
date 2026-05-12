@@ -93,15 +93,12 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         String contactName = sms.getContactName();
         
         if (contactName != null && !contactName.isEmpty()) {
-            android.text.SpannableStringBuilder ssb = new android.text.SpannableStringBuilder();
-            ssb.append(contactName);
-            ssb.append("\n");
-            int start = ssb.length();
-            ssb.append(senderText);
-            ssb.setSpan(new android.text.style.AbsoluteSizeSpan(12, true), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ssb.setSpan(new android.text.style.ForegroundColorSpan(android.graphics.Color.GRAY), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.NORMAL), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            holder.tvSender.setText(ssb);
+            String html = "<b>" + contactName + "</b><br/><small><font color='#888888'>" + senderText + "</font></small>";
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
+            } else {
+                holder.tvSender.setText(android.text.Html.fromHtml(html));
+            }
         } else {
             if (showTrimmedSender) {
                 holder.tvSender.setText(MainActivity.extractSenderName(senderText));
