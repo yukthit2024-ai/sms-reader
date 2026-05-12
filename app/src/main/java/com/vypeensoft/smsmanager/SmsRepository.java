@@ -40,11 +40,20 @@ public class SmsRepository {
                                 String number = contactCursor.getString(numIdx);
                                 String name = contactCursor.getString(nameIdx);
                                 if (number != null && name != null) {
-                                    // Normalize number by removing common formatting to improve matching
-                                    String normalized = number.replaceAll("[\\s\\-\\(\\)]", "");
-                                    contactMap.put(normalized, name);
-                                    // Also store original for exact matches
+                                    // Remove all non-digit characters for matching
+                                    String digitsOnly = number.replaceAll("\\D", "");
+                                    
+                                    // Store original and digitsOnly versions
                                     contactMap.put(number, name);
+                                    if (!digitsOnly.isEmpty()) {
+                                        contactMap.put(digitsOnly, name);
+                                        
+                                        // Also store the last 10 digits to handle country code variations
+                                        if (digitsOnly.length() >= 10) {
+                                            String last10 = digitsOnly.substring(digitsOnly.length() - 10);
+                                            contactMap.put(last10, name);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -80,9 +89,15 @@ public class SmsRepository {
                             String contactName = null;
                             if (address != null && !address.isEmpty()) {
                                 contactName = contactMap.get(address);
+                                
                                 if (contactName == null) {
-                                    String normalizedAddress = address.replaceAll("[\\s\\-\\(\\)]", "");
-                                    contactName = contactMap.get(normalizedAddress);
+                                    String digitsOnly = address.replaceAll("\\D", "");
+                                    contactName = contactMap.get(digitsOnly);
+                                    
+                                    if (contactName == null && digitsOnly.length() >= 10) {
+                                        String last10 = digitsOnly.substring(digitsOnly.length() - 10);
+                                        contactName = contactMap.get(last10);
+                                    }
                                 }
                             }
                             
