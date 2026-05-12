@@ -90,8 +90,8 @@ more prompts
 *	in the grouped view, show the message count beside the name in parenthesis.
 *	in group mode, in the message list, when multiple messages are selected, the "Delete" button is not visible properly.  Make it more visible
 *	On App start, make "Group" mode as default
-*	
-*	
+*	the Delete button is still faint.   Change its color to the same as "SELECT ALL" font color.
+*	keep it as icon, but color to be similar to "SELECT ALL" font
 *	
 *	
 *	
