@@ -15,12 +15,23 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SmsRepository {
+    private static List<SmsModel> cachedSmsList = new ArrayList<>();
+    private static boolean isCacheValid = false;
 
     public interface SmsLoadCallback {
         void onSmsLoaded(List<SmsModel> smsList);
     }
 
+    public static void clearCache() {
+        isCacheValid = false;
+    }
+
     public static void getAllSms(ContentResolver contentResolver, SmsLoadCallback callback) {
+        // Return cached data immediately if valid
+        if (isCacheValid && !cachedSmsList.isEmpty()) {
+            callback.onSmsLoaded(new ArrayList<>(cachedSmsList));
+        }
+
         new Thread(() -> {
             List<SmsModel> smsList = new ArrayList<>();
             try {
@@ -122,10 +133,17 @@ public class SmsRepository {
             }
 
             callback.onSmsLoaded(smsList);
+            
+            // Update cache
+            synchronized (SmsRepository.class) {
+                cachedSmsList = new ArrayList<>(smsList);
+                isCacheValid = true;
+            }
         }).start();
     }
 
     public static void markSmsAsRead(Context context, String messageId) {
+        isCacheValid = false; // Invalidate cache
         new Thread(() -> {
             try {
                 ContentValues values = new ContentValues();
@@ -139,6 +157,7 @@ public class SmsRepository {
     }
 
     public static void deleteSms(Context context, String messageId, Runnable onSuccess) {
+        isCacheValid = false; // Invalidate cache
         new Thread(() -> {
             try {
                 Uri uriSms = Uri.parse("content://sms/" + messageId);

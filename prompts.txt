@@ -82,7 +82,7 @@ more prompts
 *	its working.  But the list display is very slow after we have started showing contact name. Look to see if you can opptimize it
 *	when looking up name by number, handle country code in the number, etc.. so that same same phone number with different formatting are treated as same contact.
 *	messags sent by me are missing.  It only shows messages received..fix it
-
+*	its better now, but still not snappy.  If required, you can maintain an in-memory database and make it fast.  Or just store the whole messages in memory.
 
 ==============================================================================================================================
 
