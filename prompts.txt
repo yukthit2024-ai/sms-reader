@@ -83,7 +83,12 @@ more prompts
 *	when looking up name by number, handle country code in the number, etc.. so that same same phone number with different formatting are treated as same contact.
 *	messags sent by me are missing.  It only shows messages received..fix it
 *	its better now, but still not snappy.  If required, you can maintain an in-memory database and make it fast.  Or just store the whole messages in memory.
-
+*	on clicking and going to any "Group".... the Name and Number is shown on each and every message.  This takes up screen real estate.  If the effective phone number is same, avoid showing phone number.  Also Since contact lookup name is same for all messages, avoid showing contact name in all messages.  Just name on the top is sufficient.
+*	
+*	
+*	
+*	
+*	
 ==============================================================================================================================
 
 Here’s a **single, well-scoped prompt** you can give to an AI coding agent to build your SMS manager app in Java:

@@ -80,6 +80,7 @@ public class GroupedMessagesActivity extends AppCompatActivity {
                 });
             }
         });
+        adapter.setHideSender(true);
         rvGroupedSmsList.setAdapter(adapter);
         
         loadGroupedMessages();

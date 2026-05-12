@@ -20,6 +20,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
     private List<SmsModel> smsList;
     private OnItemClickListener listener;
     private boolean showTrimmedSender = false;
+    private boolean hideSender = false;
     private java.util.Set<String> selectedIds = new java.util.HashSet<>();
     private boolean isSelectionMode = false;
 
@@ -74,6 +75,10 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         // Don't call notifyDataSetChanged() here, because updateList is usually called right after
     }
 
+    public void setHideSender(boolean hideSender) {
+        this.hideSender = hideSender;
+    }
+
     public void updateList(List<SmsModel> newList) {
         this.smsList = newList;
         notifyDataSetChanged();
@@ -89,34 +94,40 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull SmsViewHolder holder, int position) {
         SmsModel sms = smsList.get(position);
-        String senderText = sms.getSender();
-        String contactName = sms.getContactName();
         
-        String prefix = sms.isSent() ? "To: " : "";
-        String suffix = sms.isSent() ? " <small><font color='#3498DB'>(Sent)</font></small>" : "";
-
-        if (contactName != null && !contactName.isEmpty()) {
-            String html = "<b>" + prefix + contactName + "</b>" + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
-            } else {
-                holder.tvSender.setText(android.text.Html.fromHtml(html));
-            }
+        if (hideSender) {
+            holder.tvSender.setVisibility(View.GONE);
         } else {
-            if (showTrimmedSender) {
-                String trimmed = MainActivity.extractSenderName(senderText);
-                String html = "<b>" + prefix + trimmed + "</b>" + suffix;
+            holder.tvSender.setVisibility(View.VISIBLE);
+            String senderText = sms.getSender();
+            String contactName = sms.getContactName();
+            
+            String prefix = sms.isSent() ? "To: " : "";
+            String suffix = sms.isSent() ? " <small><font color='#3498DB'>(Sent)</font></small>" : "";
+
+            if (contactName != null && !contactName.isEmpty()) {
+                String html = "<b>" + prefix + contactName + "</b>" + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     holder.tvSender.setText(android.text.Html.fromHtml(html));
                 }
             } else {
-                String html = "<b>" + prefix + senderText + "</b>" + suffix;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
+                if (showTrimmedSender) {
+                    String trimmed = MainActivity.extractSenderName(senderText);
+                    String html = "<b>" + prefix + trimmed + "</b>" + suffix;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
+                    } else {
+                        holder.tvSender.setText(android.text.Html.fromHtml(html));
+                    }
                 } else {
-                    holder.tvSender.setText(android.text.Html.fromHtml(html));
+                    String html = "<b>" + prefix + senderText + "</b>" + suffix;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
+                    } else {
+                        holder.tvSender.setText(android.text.Html.fromHtml(html));
+                    }
                 }
             }
         }
