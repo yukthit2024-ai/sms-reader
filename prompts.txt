@@ -89,6 +89,13 @@ more prompts
 		Also there is an extra line in the list view.  Remove those too...
 *	in the grouped view, show the message count beside the name in parenthesis.
 *	in group mode, in the message list, when multiple messages are selected, the "Delete" button is not visible properly.  Make it more visible
+*	On App start, make "Group" mode as default
+*	
+*	
+*	
+*	
+*	
+*	
 *	
 *	
 ==============================================================================================================================

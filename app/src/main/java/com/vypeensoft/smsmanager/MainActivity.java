@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private View emptyStateContainer;
     private Button btnRequestPermission;
     private RadioGroup rgViewGroup;
-    private boolean isGroupView = false;
+    private boolean isGroupView = true;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
 
@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             isGroupView = (checkedId == R.id.rbGroup);
             performSearch();
         });
+        rgViewGroup.check(R.id.rbGroup);
 
         btnRequestPermission.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
