@@ -84,7 +84,9 @@ more prompts
 *	messags sent by me are missing.  It only shows messages received..fix it
 *	its better now, but still not snappy.  If required, you can maintain an in-memory database and make it fast.  Or just store the whole messages in memory.
 *	on clicking and going to any "Group".... the Name and Number is shown on each and every message.  This takes up screen real estate.  If the effective phone number is same, avoid showing phone number.  Also Since contact lookup name is same for all messages, avoid showing contact name in all messages.  Just name on the top is sufficient.
-*	
+*	Hide names of people got from Contacts only.
+		Other SMS senders without phone numbers(senders whose names were trimmed and then grouped together) .. their names should be shown.
+		Also there is an extra line in the list view.  Remove those too...
 *	
 *	
 *	

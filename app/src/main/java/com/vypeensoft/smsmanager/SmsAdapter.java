@@ -95,17 +95,19 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
     public void onBindViewHolder(@NonNull SmsViewHolder holder, int position) {
         SmsModel sms = smsList.get(position);
         
-        if (hideSender) {
+        String senderText = sms.getSender();
+        String contactName = sms.getContactName();
+        boolean isFromContacts = contactName != null && !contactName.isEmpty();
+        
+        if (hideSender && isFromContacts) {
             holder.tvSender.setVisibility(View.GONE);
         } else {
             holder.tvSender.setVisibility(View.VISIBLE);
-            String senderText = sms.getSender();
-            String contactName = sms.getContactName();
             
             String prefix = sms.isSent() ? "To: " : "";
             String suffix = sms.isSent() ? " <small><font color='#3498DB'>(Sent)</font></small>" : "";
 
-            if (contactName != null && !contactName.isEmpty()) {
+            if (isFromContacts) {
                 String html = "<b>" + prefix + contactName + "</b>" + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
@@ -113,21 +115,12 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
                     holder.tvSender.setText(android.text.Html.fromHtml(html));
                 }
             } else {
-                if (showTrimmedSender) {
-                    String trimmed = MainActivity.extractSenderName(senderText);
-                    String html = "<b>" + prefix + trimmed + "</b>" + suffix;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
-                    } else {
-                        holder.tvSender.setText(android.text.Html.fromHtml(html));
-                    }
+                String displayName = showTrimmedSender ? MainActivity.extractSenderName(senderText) : senderText;
+                String html = "<b>" + prefix + displayName + "</b>" + suffix;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
                 } else {
-                    String html = "<b>" + prefix + senderText + "</b>" + suffix;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                        holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
-                    } else {
-                        holder.tvSender.setText(android.text.Html.fromHtml(html));
-                    }
+                    holder.tvSender.setText(android.text.Html.fromHtml(html));
                 }
             }
         }
