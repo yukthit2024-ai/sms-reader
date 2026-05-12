@@ -58,4 +58,12 @@ public class SmsModel implements Serializable {
     public boolean isSent() {
         return type == 2;
     }
+
+    public int getGroupCount() {
+        return groupCount;
+    }
+
+    public void setGroupCount(int groupCount) {
+        this.groupCount = groupCount;
+    }
 }
