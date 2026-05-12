@@ -37,28 +37,32 @@ public class SmsRepository {
                     Map<String, String> contactCache = new HashMap<>();
 
                     while (cursor.moveToNext()) {
-                        String id = cursor.getString(indexId);
-                        String address = cursor.getString(indexAddress);
-                        String body = cursor.getString(indexBody);
-                        long dateMillis = cursor.getLong(indexDate);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss", Locale.getDefault());
-                        String timestamp = sdf.format(new Date(dateMillis));
-                        boolean isRead = true; // default
-                        if (indexRead != -1) {
-                            isRead = cursor.getInt(indexRead) == 1;
-                        }
-
-                        String contactName = null;
-                        if (address != null && !address.isEmpty()) {
-                            if (contactCache.containsKey(address)) {
-                                contactName = contactCache.get(address);
-                            } else {
-                                contactName = getContactName(contentResolver, address);
-                                contactCache.put(address, contactName);
+                        try {
+                            String id = cursor.getString(indexId);
+                            String address = cursor.getString(indexAddress);
+                            String body = cursor.getString(indexBody);
+                            long dateMillis = cursor.getLong(indexDate);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss", Locale.getDefault());
+                            String timestamp = sdf.format(new Date(dateMillis));
+                            boolean isRead = true; // default
+                            if (indexRead != -1) {
+                                isRead = cursor.getInt(indexRead) == 1;
                             }
+
+                            String contactName = null;
+                            if (address != null && !address.isEmpty()) {
+                                if (contactCache.containsKey(address)) {
+                                    contactName = contactCache.get(address);
+                                } else {
+                                    contactName = getContactName(contentResolver, address);
+                                    contactCache.put(address, contactName);
+                                }
+                            }
+                            
+                            smsList.add(new SmsModel(id, address, contactName, body, timestamp, isRead));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        
-                        smsList.add(new SmsModel(id, address, contactName, body, timestamp, isRead));
                     }
                     cursor.close();
                 }

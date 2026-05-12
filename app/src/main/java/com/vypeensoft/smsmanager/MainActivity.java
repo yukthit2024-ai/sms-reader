@@ -261,11 +261,11 @@ public class MainActivity extends AppCompatActivity {
             filteredList.addAll(allSmsList);
         } else {
             for (SmsModel sms : allSmsList) {
-                boolean matchesSender = sms.getSender().toLowerCase().contains(query);
-                boolean matchesBody = sms.getBody().toLowerCase().contains(query);
-                boolean matchesContact = sms.getContactName() != null && sms.getContactName().toLowerCase().contains(query);
+                String sender = sms.getSender() != null ? sms.getSender().toLowerCase() : "";
+                String body = sms.getBody() != null ? sms.getBody().toLowerCase() : "";
+                String contact = sms.getContactName() != null ? sms.getContactName().toLowerCase() : "";
                 
-                if (matchesSender || matchesBody || matchesContact) {
+                if (sender.contains(query) || body.contains(query) || contact.contains(query)) {
                     filteredList.add(sms);
                 }
             }
@@ -288,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String getGroupKey(SmsModel sms) {
+        if (sms == null) return "";
         if (sms.getContactName() != null && !sms.getContactName().isEmpty()) {
             return sms.getContactName();
         }
