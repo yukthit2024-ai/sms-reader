@@ -87,7 +87,7 @@ more prompts
 *	Hide names of people got from Contacts only.
 		Other SMS senders without phone numbers(senders whose names were trimmed and then grouped together) .. their names should be shown.
 		Also there is an extra line in the list view.  Remove those too...
-*	
+*	in the grouped view, show the message count beside the name in parenthesis.
 *	
 *	
 *	

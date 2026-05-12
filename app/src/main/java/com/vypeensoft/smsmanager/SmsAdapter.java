@@ -106,9 +106,10 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             
             String prefix = sms.isSent() ? "To: " : "";
             String suffix = sms.isSent() ? " <small><font color='#3498DB'>(Sent)</font></small>" : "";
+            String countStr = sms.getGroupCount() > 0 ? " <font color='#7F8C8D'>(" + sms.getGroupCount() + ")</font>" : "";
 
             if (isFromContacts) {
-                String html = "<b>" + prefix + contactName + "</b>" + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
+                String html = "<b>" + prefix + contactName + "</b>" + countStr + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
                 } else {
@@ -116,7 +117,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
                 }
             } else {
                 String displayName = showTrimmedSender ? MainActivity.extractSenderName(senderText) : senderText;
-                String html = "<b>" + prefix + displayName + "</b>" + suffix;
+                String html = "<b>" + prefix + displayName + "</b>" + countStr + suffix;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
                 } else {

@@ -10,6 +10,7 @@ public class SmsModel implements Serializable {
     private String timestamp;
     private boolean isRead;
     private int type; // 1 for inbox, 2 for sent
+    private int groupCount; // Only used in grouped view
 
     public SmsModel(String id, String sender, String contactName, String body, String timestamp, boolean isRead, int type) {
         this.id = id;
@@ -19,6 +20,7 @@ public class SmsModel implements Serializable {
         this.timestamp = timestamp;
         this.isRead = isRead;
         this.type = type;
+        this.groupCount = 0;
     }
 
     public String getId() {

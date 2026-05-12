@@ -273,12 +273,26 @@ public class MainActivity extends AppCompatActivity {
 
         if (isGroupView) {
             Map<String, SmsModel> latestMessages = new LinkedHashMap<>();
+            Map<String, Integer> groupCounts = new HashMap<>();
+            
             for (SmsModel sms : filteredList) {
                 String groupKey = getGroupKey(sms);
+                
+                // Count messages in this group
+                int count = groupCounts.containsKey(groupKey) ? groupCounts.get(groupKey) : 0;
+                groupCounts.put(groupKey, count + 1);
+                
                 if (!latestMessages.containsKey(groupKey)) {
                     latestMessages.put(groupKey, sms);
                 }
             }
+            
+            // Apply counts to the representative models
+            for (Map.Entry<String, SmsModel> entry : latestMessages.entrySet()) {
+                SmsModel model = entry.getValue();
+                model.setGroupCount(groupCounts.get(entry.getKey()));
+            }
+            
             filteredList = new ArrayList<>(latestMessages.values());
         }
 
