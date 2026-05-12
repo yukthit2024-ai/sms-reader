@@ -24,6 +24,36 @@ public class SmsRepository {
         new Thread(() -> {
             List<SmsModel> smsList = new ArrayList<>();
             try {
+                // Step 1: Pre-fetch all contacts into a map for fast lookup
+                Map<String, String> contactMap = new HashMap<>();
+                try {
+                    Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection = new String[]{
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                    };
+                    try (Cursor contactCursor = contentResolver.query(uri, projection, null, null, null)) {
+                        if (contactCursor != null) {
+                            int numIdx = contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                            int nameIdx = contactCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                            while (contactCursor.moveToNext()) {
+                                String number = contactCursor.getString(numIdx);
+                                String name = contactCursor.getString(nameIdx);
+                                if (number != null && name != null) {
+                                    // Normalize number by removing common formatting to improve matching
+                                    String normalized = number.replaceAll("[\\s\\-\\(\\)]", "");
+                                    contactMap.put(normalized, name);
+                                    // Also store original for exact matches
+                                    contactMap.put(number, name);
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // Step 2: Load SMS messages
                 Uri uriSms = Uri.parse("content://sms/inbox");
                 Cursor cursor = contentResolver.query(uriSms, new String[]{"_id", "address", "body", "date", "read"}, null, null, "date DESC");
 
@@ -34,8 +64,6 @@ public class SmsRepository {
                     int indexDate = cursor.getColumnIndex("date");
                     int indexRead = cursor.getColumnIndex("read");
 
-                    Map<String, String> contactCache = new HashMap<>();
-
                     while (cursor.moveToNext()) {
                         try {
                             String id = cursor.getString(indexId);
@@ -44,18 +72,17 @@ public class SmsRepository {
                             long dateMillis = cursor.getLong(indexDate);
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss", Locale.getDefault());
                             String timestamp = sdf.format(new Date(dateMillis));
-                            boolean isRead = true; // default
+                            boolean isRead = true;
                             if (indexRead != -1) {
                                 isRead = cursor.getInt(indexRead) == 1;
                             }
 
                             String contactName = null;
                             if (address != null && !address.isEmpty()) {
-                                if (contactCache.containsKey(address)) {
-                                    contactName = contactCache.get(address);
-                                } else {
-                                    contactName = getContactName(contentResolver, address);
-                                    contactCache.put(address, contactName);
+                                contactName = contactMap.get(address);
+                                if (contactName == null) {
+                                    String normalizedAddress = address.replaceAll("[\\s\\-\\(\\)]", "");
+                                    contactName = contactMap.get(normalizedAddress);
                                 }
                             }
                             
@@ -149,27 +176,6 @@ public class SmsRepository {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    private static String getContactName(ContentResolver contentResolver, String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.isEmpty()) return null;
-        
-        try {
-            Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-            String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
-            
-            try (Cursor cursor = contentResolver.query(uri, projection, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int index = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME);
-                    if (index != -1) {
-                        return cursor.getString(index);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private static String escapeXml(String str) {
