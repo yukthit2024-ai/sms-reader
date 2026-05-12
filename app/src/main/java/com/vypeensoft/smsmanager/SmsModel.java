@@ -9,14 +9,16 @@ public class SmsModel implements Serializable {
     private String body;
     private String timestamp;
     private boolean isRead;
+    private int type; // 1 for inbox, 2 for sent
 
-    public SmsModel(String id, String sender, String contactName, String body, String timestamp, boolean isRead) {
+    public SmsModel(String id, String sender, String contactName, String body, String timestamp, boolean isRead, int type) {
         this.id = id;
         this.sender = sender;
         this.contactName = contactName;
         this.body = body;
         this.timestamp = timestamp;
         this.isRead = isRead;
+        this.type = type;
     }
 
     public String getId() {
@@ -45,5 +47,13 @@ public class SmsModel implements Serializable {
 
     public void setRead(boolean read) {
         this.isRead = read;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public boolean isSent() {
+        return type == 2;
     }
 }

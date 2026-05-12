@@ -25,15 +25,18 @@ public class MessageDetailActivity extends AppCompatActivity {
             String senderText = sms.getSender();
             String contactName = sms.getContactName();
             
+            String prefix = sms.isSent() ? "To: " : "";
+            String suffix = sms.isSent() ? " <small><font color='#3498DB'>(Sent)</font></small>" : "";
+
             if (contactName != null && !contactName.isEmpty()) {
-                String html = "<b>" + contactName + "</b><br/><small><font color='#888888'>" + senderText + "</font></small>";
+                String html = "<b>" + prefix + contactName + "</b>" + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     tvSender.setText(android.text.Html.fromHtml(html));
                 }
             } else {
-                tvSender.setText(senderText);
+                tvSender.setText(prefix + senderText);
             }
             tvTimestamp.setText(sms.getTimestamp());
             tvBody.setText(sms.getBody());

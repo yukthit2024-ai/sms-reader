@@ -63,8 +63,8 @@ public class SmsRepository {
                 }
 
                 // Step 2: Load SMS messages
-                Uri uriSms = Uri.parse("content://sms/inbox");
-                Cursor cursor = contentResolver.query(uriSms, new String[]{"_id", "address", "body", "date", "read"}, null, null, "date DESC");
+                Uri uriSms = Uri.parse("content://sms/");
+                Cursor cursor = contentResolver.query(uriSms, new String[]{"_id", "address", "body", "date", "read", "type"}, null, null, "date DESC");
 
                 if (cursor != null) {
                     int indexId = cursor.getColumnIndex("_id");
@@ -72,6 +72,7 @@ public class SmsRepository {
                     int indexBody = cursor.getColumnIndex("body");
                     int indexDate = cursor.getColumnIndex("date");
                     int indexRead = cursor.getColumnIndex("read");
+                    int indexType = cursor.getColumnIndex("type");
 
                     while (cursor.moveToNext()) {
                         try {
@@ -85,6 +86,14 @@ public class SmsRepository {
                             if (indexRead != -1) {
                                 isRead = cursor.getInt(indexRead) == 1;
                             }
+                            
+                            int type = 1; // default to inbox
+                            if (indexType != -1) {
+                                type = cursor.getInt(indexType);
+                            }
+
+                            // Only include Inbox (1) and Sent (2) messages
+                            if (type != 1 && type != 2) continue;
 
                             String contactName = null;
                             if (address != null && !address.isEmpty()) {
@@ -101,7 +110,7 @@ public class SmsRepository {
                                 }
                             }
                             
-                            smsList.add(new SmsModel(id, address, contactName, body, timestamp, isRead));
+                            smsList.add(new SmsModel(id, address, contactName, body, timestamp, isRead, type));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

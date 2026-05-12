@@ -92,8 +92,11 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
         String senderText = sms.getSender();
         String contactName = sms.getContactName();
         
+        String prefix = sms.isSent() ? "To: " : "";
+        String suffix = sms.isSent() ? " <small><font color='#3498DB'>(Sent)</font></small>" : "";
+
         if (contactName != null && !contactName.isEmpty()) {
-            String html = "<b>" + contactName + "</b><br/><small><font color='#888888'>" + senderText + "</font></small>";
+            String html = "<b>" + prefix + contactName + "</b>" + suffix + "<br/><small><font color='#888888'>" + senderText + "</font></small>";
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
             } else {
@@ -101,11 +104,23 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
             }
         } else {
             if (showTrimmedSender) {
-                holder.tvSender.setText(MainActivity.extractSenderName(senderText));
+                String trimmed = MainActivity.extractSenderName(senderText);
+                String html = "<b>" + prefix + trimmed + "</b>" + suffix;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    holder.tvSender.setText(android.text.Html.fromHtml(html));
+                }
             } else {
-                holder.tvSender.setText(senderText);
+                String html = "<b>" + prefix + senderText + "</b>" + suffix;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    holder.tvSender.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    holder.tvSender.setText(android.text.Html.fromHtml(html));
+                }
             }
         }
+        
         holder.tvTimestamp.setText(sms.getTimestamp());
         holder.tvBody.setText(sms.getBody());
         
