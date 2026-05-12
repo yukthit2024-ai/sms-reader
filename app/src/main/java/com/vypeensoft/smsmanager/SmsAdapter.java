@@ -89,10 +89,25 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.SmsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull SmsViewHolder holder, int position) {
         SmsModel sms = smsList.get(position);
-        if (showTrimmedSender) {
-            holder.tvSender.setText(MainActivity.extractSenderName(sms.getSender()));
+        String senderText = sms.getSender();
+        String contactName = sms.getContactName();
+        
+        if (contactName != null && !contactName.isEmpty()) {
+            android.text.SpannableStringBuilder ssb = new android.text.SpannableStringBuilder();
+            ssb.append(contactName);
+            ssb.append("\n");
+            int start = ssb.length();
+            ssb.append(senderText);
+            ssb.setSpan(new android.text.style.AbsoluteSizeSpan(12, true), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.setSpan(new android.text.style.ForegroundColorSpan(android.graphics.Color.GRAY), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.NORMAL), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.tvSender.setText(ssb);
         } else {
-            holder.tvSender.setText(sms.getSender());
+            if (showTrimmedSender) {
+                holder.tvSender.setText(MainActivity.extractSenderName(senderText));
+            } else {
+                holder.tvSender.setText(senderText);
+            }
         }
         holder.tvTimestamp.setText(sms.getTimestamp());
         holder.tvBody.setText(sms.getBody());

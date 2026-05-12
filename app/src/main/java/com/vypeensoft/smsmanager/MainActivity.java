@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
     private void checkPermissions() {
         boolean hasReadSms = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
         boolean hasWriteSms = ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") == PackageManager.PERMISSION_GRANTED;
+        boolean hasReadContacts = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
         boolean hasStorage = true;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -212,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
             List<String> permissions = new ArrayList<>();
             if (!hasReadSms) permissions.add(Manifest.permission.READ_SMS);
             if (!hasWriteSms) permissions.add("android.permission.WRITE_SMS");
+            if (!hasReadContacts) permissions.add(Manifest.permission.READ_CONTACTS);
             
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
                 if (!hasStorage) {
@@ -330,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_READ_SMS) {
             boolean readSmsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
             boolean writeSmsGranted = ContextCompat.checkSelfPermission(this, "android.permission.WRITE_SMS") == PackageManager.PERMISSION_GRANTED;
+            boolean readContactsGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
             boolean storageGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
             if (readSmsGranted && writeSmsGranted) {

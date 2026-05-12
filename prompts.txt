@@ -78,7 +78,7 @@ more prompts
 		Formats for export - 3 values.
 		The export Folder should have default value of "/sdcard/Vypeensoft/SMS_Manager/export/"
 *	On first run, create a new settings.json and place default values in it
-
+*	while displaying sender/receiver, if the phone number is in Contacts, extact name and show name(number in smaller font below)
 
 
 Here’s a **single, well-scoped prompt** you can give to an AI coding agent to build your SMS manager app in Java:

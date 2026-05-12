@@ -5,13 +5,15 @@ import java.io.Serializable;
 public class SmsModel implements Serializable {
     private String id;
     private String sender;
+    private String contactName;
     private String body;
     private String timestamp;
     private boolean isRead;
 
-    public SmsModel(String id, String sender, String body, String timestamp, boolean isRead) {
+    public SmsModel(String id, String sender, String contactName, String body, String timestamp, boolean isRead) {
         this.id = id;
         this.sender = sender;
+        this.contactName = contactName;
         this.body = body;
         this.timestamp = timestamp;
         this.isRead = isRead;
@@ -23,6 +25,10 @@ public class SmsModel implements Serializable {
 
     public String getSender() {
         return sender;
+    }
+
+    public String getContactName() {
+        return contactName;
     }
 
     public String getBody() {

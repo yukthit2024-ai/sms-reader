@@ -1,16 +1,17 @@
 package com.vypeensoft.smsmanager;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.time.Instant;
+ 
+ import android.content.ContentValues;
+ import android.content.Context;
+ import android.content.ContentResolver;
+ import android.database.Cursor;
+ import android.net.Uri;
+ import android.provider.ContactsContract;
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+ import java.util.Date;
+ import java.util.List;
+ import java.util.Locale;
+ import java.time.Instant;
 
 public class SmsRepository {
 
@@ -32,6 +33,8 @@ public class SmsRepository {
                     int indexDate = cursor.getColumnIndex("date");
                     int indexRead = cursor.getColumnIndex("read");
 
+                    java.util.Map<String, String> contactCache = new java.util.HashMap<>();
+
                     while (cursor.moveToNext()) {
                         String id = cursor.getString(indexId);
                         String address = cursor.getString(indexAddress);
@@ -44,7 +47,14 @@ public class SmsRepository {
                             isRead = cursor.getInt(indexRead) == 1;
                         }
 
-                        smsList.add(new SmsModel(id, address, body, timestamp, isRead));
+                        String contactName;
+                        if (contactCache.containsKey(address)) {
+                            contactName = contactCache.get(address);
+                        } else {
+                            contactName = getContactName(contentResolver, address);
+                            contactCache.put(address, contactName);
+                        }
+                        smsList.add(new SmsModel(id, address, contactName, body, timestamp, isRead));
                     }
                     cursor.close();
                 }
@@ -131,6 +141,22 @@ public class SmsRepository {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private static String getContactName(ContentResolver contentResolver, String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) return null;
+        
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+        String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
+        
+        try (Cursor cursor = contentResolver.query(uri, projection, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static String escapeXml(String str) {

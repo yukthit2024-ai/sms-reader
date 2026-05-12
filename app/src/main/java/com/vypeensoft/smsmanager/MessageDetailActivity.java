@@ -22,7 +22,22 @@ public class MessageDetailActivity extends AppCompatActivity {
 
         SmsModel sms = (SmsModel) getIntent().getSerializableExtra("sms_data");
         if (sms != null) {
-            tvSender.setText(sms.getSender());
+            String senderText = sms.getSender();
+            String contactName = sms.getContactName();
+            
+            if (contactName != null && !contactName.isEmpty()) {
+                android.text.SpannableStringBuilder ssb = new android.text.SpannableStringBuilder();
+                ssb.append(contactName);
+                ssb.append("\n");
+                int start = ssb.length();
+                ssb.append(senderText);
+                ssb.setSpan(new android.text.style.AbsoluteSizeSpan(14, true), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.setSpan(new android.text.style.ForegroundColorSpan(android.graphics.Color.GRAY), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.NORMAL), start, ssb.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tvSender.setText(ssb);
+            } else {
+                tvSender.setText(senderText);
+            }
             tvTimestamp.setText(sms.getTimestamp());
             tvBody.setText(sms.getBody());
             
