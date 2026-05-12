@@ -14,7 +14,7 @@ import java.util.List;
 public class GroupedMessagesActivity extends AppCompatActivity {
     private RecyclerView rvGroupedSmsList;
     private SmsAdapter adapter;
-    private String groupName;
+    private String groupKey;
     private ActionMode actionMode;
 
     @Override
@@ -22,8 +22,9 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grouped_messages);
         
-        groupName = getIntent().getStringExtra("group_name");
-        setTitle(groupName != null ? groupName : "Messages");
+        String groupDisplayName = getIntent().getStringExtra("group_display_name");
+        groupKey = getIntent().getStringExtra("group_key");
+        setTitle(groupDisplayName != null ? groupDisplayName : "Messages");
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -180,10 +181,11 @@ public class GroupedMessagesActivity extends AppCompatActivity {
         SmsRepository.getAllSms(getContentResolver(), smsList -> {
             List<SmsModel> filtered = new ArrayList<>();
             for (SmsModel sms : smsList) {
-                if (MainActivity.extractSenderName(sms.getSender()).equals(groupName)) {
+                if (MainActivity.getGroupKey(sms).equals(groupKey)) {
                     if (finalSearchQuery.isEmpty() || 
                         sms.getSender().toLowerCase().contains(finalSearchQuery) || 
-                        sms.getBody().toLowerCase().contains(finalSearchQuery)) {
+                        sms.getBody().toLowerCase().contains(finalSearchQuery) ||
+                        (sms.getContactName() != null && sms.getContactName().toLowerCase().contains(finalSearchQuery))) {
                         filtered.add(sms);
                     }
                 }

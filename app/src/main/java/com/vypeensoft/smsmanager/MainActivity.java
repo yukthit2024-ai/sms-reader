@@ -112,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(SmsModel sms) {
                 if (isGroupView) {
                     Intent intent = new Intent(MainActivity.this, GroupedMessagesActivity.class);
-                    intent.putExtra("group_name", extractSenderName(sms.getSender()));
+                    intent.putExtra("group_key", getGroupKey(sms));
+                    intent.putExtra("group_display_name", sms.getContactName() != null ? sms.getContactName() : extractSenderName(sms.getSender()));
                     intent.putExtra("search_query", etSearch.getText().toString().toLowerCase().trim());
                     startActivity(intent);
                 } else {
@@ -260,7 +261,11 @@ public class MainActivity extends AppCompatActivity {
             filteredList.addAll(allSmsList);
         } else {
             for (SmsModel sms : allSmsList) {
-                if (sms.getSender().toLowerCase().contains(query) || sms.getBody().toLowerCase().contains(query)) {
+                boolean matchesSender = sms.getSender().toLowerCase().contains(query);
+                boolean matchesBody = sms.getBody().toLowerCase().contains(query);
+                boolean matchesContact = sms.getContactName() != null && sms.getContactName().toLowerCase().contains(query);
+                
+                if (matchesSender || matchesBody || matchesContact) {
                     filteredList.add(sms);
                 }
             }
@@ -269,10 +274,9 @@ public class MainActivity extends AppCompatActivity {
         if (isGroupView) {
             Map<String, SmsModel> latestMessages = new LinkedHashMap<>();
             for (SmsModel sms : filteredList) {
-                String senderName = extractSenderName(sms.getSender());
-                if (!latestMessages.containsKey(senderName)) {
-                    // Since allSmsList is already sorted by date DESC, the first one encountered is the latest
-                    latestMessages.put(senderName, sms);
+                String groupKey = getGroupKey(sms);
+                if (!latestMessages.containsKey(groupKey)) {
+                    latestMessages.put(groupKey, sms);
                 }
             }
             filteredList = new ArrayList<>(latestMessages.values());
@@ -281,6 +285,13 @@ public class MainActivity extends AppCompatActivity {
         smsAdapter.setShowTrimmedSender(isGroupView);
         smsAdapter.updateList(filteredList);
         updateVisibility();
+    }
+
+    public static String getGroupKey(SmsModel sms) {
+        if (sms.getContactName() != null && !sms.getContactName().isEmpty()) {
+            return sms.getContactName();
+        }
+        return extractSenderName(sms.getSender());
     }
 
     public static String extractSenderName(String originalSender) {
